@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>菜菜不吃鱼 - 科研智能体工作台</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div class="shell">
+        <aside class="sidebar">
+            <div>
+                <p class="eyebrow">菜菜不吃鱼</p>
+                <h1>科研智能体工作台</h1>
+                <p class="sidebar-copy">先分析论文，再追问；也可以直接分析本地仓库代码结构与依赖。</p>
+            </div>
+            <div class="session-box">
+                <div class="session-meta">
+                    <span>会话 ID</span>
+                    <strong id="session-id">创建中...</strong>
+                </div>
+                <button class="ghost-btn" id="reset-session-btn" type="button">重置当前会话</button>
+            </div>
+            <div class="panel upload-panel">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="single" type="button">单论文分析</button>
+                    <button class="tab-btn" data-tab="survey" type="button">多论文综述</button>
+                    <button class="tab-btn" data-tab="repo" type="button">代码仓库分析</button>
+                </div>
+
+                <section id="single" class="tab-content active">
+                    <div class="form-group">
+                        <label for="single-project">项目名称</label>
+                        <input type="text" id="single-project" placeholder="输入项目名称" value="my-paper">
+                    </div>
+                    <div class="form-group">
+                        <label for="single-file">上传论文</label>
+                        <input type="file" id="single-file" accept=".txt,.md,.pdf">
+                        <small>支持 txt、md、pdf；默认快速模式，仅生成阅读核心产物</small>
+                    </div>
+                    <button class="btn-primary" id="run-single-btn" type="button">开始快速分析</button>
+                </section>
+
+                <section id="survey" class="tab-content">
+                    <div class="form-group">
+                        <label for="survey-project">综述主题</label>
+                        <input type="text" id="survey-project" placeholder="输入综述名称" value="my-survey">
+                    </div>
+                    <div class="form-group">
+                        <label for="survey-files">上传论文（至少 2 篇）</label>
+                        <input type="file" id="survey-files" multiple accept=".txt,.md,.pdf">
+                        <small>先生成结构化卡片，再聚合综述与冲突报告</small>
+                    </div>
+                    <button class="btn-primary" id="run-survey-btn" type="button">生成综述</button>
+                </section>
+
+                <section id="repo" class="tab-content">
+                    <div class="form-group">
+                        <label for="repo-project">仓库名称</label>
+                        <input type="text" id="repo-project" placeholder="输入仓库分析任务名" value="repo-analysis">
+                    </div>
+                    <div class="form-group">
+                        <label for="repo-path">本地仓库路径</label>
+                        <input type="text" id="repo-path" placeholder="例如 D:\\code\\some-project">
+                        <small>会生成仓库画像、AST 分析和依赖环境建议</small>
+                    </div>
+                    <button class="btn-primary" id="run-repo-btn" type="button">分析仓库</button>
+                </section>
+            </div>
+
+            <div class="panel task-panel">
+                <div class="panel-title-row">
+                    <h2>任务状态</h2>
+                    <span id="task-status-badge" class="badge">idle</span>
+                    <button class="ghost-btn danger" id="cancel-task-btn" type="button" style="display:none;">取消任务</button>
+                </div>
+                <div class="progress-bar"><span id="task-progress-bar"></span></div>
+                <p id="task-stage" class="task-stage">等待任务</p>
+                <p id="task-message" class="task-message">上传论文或输入仓库路径后会在这里显示当前步骤。</p>
+                <p id="task-eta" class="task-message">预计剩余：--</p>
+                <div id="task-eta-breakdown" class="eta-breakdown"></div>
+                <div id="confirm-panel" class="confirm-panel" style="display:none;">
+                    <p id="confirm-message" class="confirm-message">是否继续？</p>
+                    <div class="confirm-actions">
+                        <button class="btn-primary" id="confirm-continue-btn" type="button">继续执行</button>
+                        <button class="ghost-btn danger" id="confirm-cancel-btn" type="button">取消任务</button>
+                    </div>
+                </div>
+                <pre id="task-trace" class="trace-box">暂无运行轨迹</pre>
+            </div>
+
+            <div class="panel history-panel">
+                <div class="panel-title-row">
+                    <h2>最近运行</h2>
+                    <span class="badge">history</span>
+                </div>
+                <div id="history-list" class="history-list"></div>
+            </div>
+        </aside>
+
+        <main class="workspace-grid">
+            <section class="panel chat-panel">
+                <div class="panel-title-row">
+                    <h2>科研对话</h2>
+                    <span class="badge accent">scoped chat</span>
+                </div>
+                <div class="scope-box">
+                    <label for="chat-scope">回答范围</label>
+                    <input type="text" id="chat-scope" placeholder="例如 summary.md, compare_matrix.json, repo_profile.json">
+                    <small>留空默认使用全部材料；可按文件名关键词缩小范围。</small>
+                </div>
+                <div id="chat-messages" class="chat-messages"></div>
+                <form id="chat-form" class="chat-form">
+                    <textarea id="chat-input" rows="4" placeholder="例如：这篇论文的核心创新是什么？compare_matrix 里有哪些评测不可直接比较？"></textarea>
+                    <button class="btn-primary" type="submit">发送问题</button>
+                </form>
+            </section>
+
+            <section class="panel artifact-panel">
+                <div class="panel-title-row">
+                    <h2>分析产物</h2>
+                    <span class="badge">workspace</span>
+                </div>
+                <div class="artifact-tabs">
+                    <button class="artifact-tab active" data-artifact="paper_digest.json" type="button">阅读卡片</button>
+                    <button class="artifact-tab" data-artifact="summary.md" type="button">摘要</button>
+                    <button class="artifact-tab" data-artifact="claims.md" type="button">关键信息</button>
+                    <button class="artifact-tab" data-artifact="paper_structure.md" type="button">结构</button>
+                    <button class="artifact-tab" data-artifact="method_card.md" type="button">方法卡片</button>
+                    <button class="artifact-tab" data-artifact="compare_matrix.json" type="button">对比矩阵</button>
+                    <button class="artifact-tab" data-artifact="comparison_report.md" type="button">冲突报告</button>
+                    <button class="artifact-tab" data-artifact="survey_taxonomy.md" type="button">分类法</button>
+                    <button class="artifact-tab" data-artifact="survey_evolution.md" type="button">演进脉络</button>
+                    <button class="artifact-tab" data-artifact="survey_comparison_table.md" type="button">对比表</button>
+                    <button class="artifact-tab" data-artifact="survey_challenges.md" type="button">开放挑战</button>
+                    <button class="artifact-tab" data-artifact="survey.md" type="button">综述</button>
+                    <button class="artifact-tab" data-artifact="repo_profile.json" type="button">仓库画像</button>
+                    <button class="artifact-tab" data-artifact="ast_analysis.json" type="button">AST</button>
+                    <button class="artifact-tab" data-artifact="env_resolution.json" type="button">依赖建议</button>
+                </div>
+                <div id="artifact-content" class="artifact-content">先运行一个任务，再在这里查看产物。</div>
+            </section>
+        </main>
+    </div>
+
+    <div id="error-msg" class="error-toast hidden"></div>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

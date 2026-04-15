@@ -1,0 +1,57 @@
+# 环境变量和敏感配置
+.env
+.env.local
+.claude/settings.local.json
+
+# 个人资料和数据
+我的资料库/
+
+# 工作空间数据（包含运行记录和会话）
+workspace/sessions/
+workspace/runs/
+workspace/uploads/
+workspace/outputs/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 临时文件
+*.log
+*.tmp
+*.temp
