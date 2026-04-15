@@ -452,8 +452,6 @@ Be specific and technical. Format clearly with section headers.
 SKILL_META = SkillMeta(
     name="experiment_designer",
     description="Design comprehensive experiment plan including baselines and ablation studies",
-    skill_class=ExperimentDesignerSkill,
-    required_context=["innovation_proposals or selected_innovation"],
-    optional_context=["code_analysis", "paper_digests"],
-    outputs=["experiment_design", "design_json", "design_report"]
+    inputs_required=[],
+    outputs_produced=["experiment_design", "design_json", "design_report"]
 )

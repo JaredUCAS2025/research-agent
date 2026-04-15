@@ -160,8 +160,6 @@ class GitHubSearchSkill(BaseSkill):
 SKILL_META = SkillMeta(
     name="github_search",
     description="Search GitHub repositories by keywords, language, and stars",
-    skill_class=GitHubSearchSkill,
-    required_context=["github_query"],
-    optional_context=["github_language", "github_min_stars", "github_max_results"],
-    outputs=["github_repositories", "search_results_json", "search_report_md"]
+    inputs_required=["github_query"],
+    outputs_produced=["github_repositories", "search_results_json", "search_report_md"]
 )

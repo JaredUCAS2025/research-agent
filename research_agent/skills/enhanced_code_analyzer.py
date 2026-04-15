@@ -282,8 +282,6 @@ Keep the analysis concise and focused on technical details.
 SKILL_META = SkillMeta(
     name="enhanced_code_analyzer",
     description="Deep analysis of code repository structure and implementation",
-    skill_class=EnhancedCodeAnalyzerSkill,
-    required_context=["cloned_repo_path"],
-    optional_context=[],
-    outputs=["code_analysis", "analysis_json", "analysis_report"]
+    inputs_required=["cloned_repo_path"],
+    outputs_produced=["code_analysis", "analysis_json", "analysis_report"]
 )

@@ -185,8 +185,6 @@ class GitHubCloneSkill(BaseSkill):
 SKILL_META = SkillMeta(
     name="github_clone",
     description="Clone a GitHub repository to local directory",
-    skill_class=GitHubCloneSkill,
-    required_context=["github_clone_url or github_repo_name"],
-    optional_context=["github_repositories"],
-    outputs=["cloned_repo_path", "cloned_repo_info", "repo_info_json"]
+    inputs_required=[],
+    outputs_produced=["cloned_repo_path", "cloned_repo_info", "repo_info_json"]
 )

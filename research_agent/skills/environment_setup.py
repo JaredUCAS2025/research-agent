@@ -290,8 +290,6 @@ class EnvironmentSetupSkill(BaseSkill):
 SKILL_META = SkillMeta(
     name="environment_setup",
     description="Automatically setup experiment environment with virtual env and dependencies",
-    skill_class=EnvironmentSetupSkill,
-    required_context=["cloned_repo_path or requirements_file"],
-    optional_context=[],
-    outputs=["venv_path", "environment_info", "setup_log", "env_info_json"]
+    inputs_required=[],
+    outputs_produced=["venv_path", "environment_info", "setup_log", "env_info_json"]
 )

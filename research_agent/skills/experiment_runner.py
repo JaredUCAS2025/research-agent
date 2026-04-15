@@ -387,8 +387,6 @@ class ExperimentRunnerSkill(BaseSkill):
 SKILL_META = SkillMeta(
     name="experiment_runner",
     description="Execute experiments safely and collect results",
-    skill_class=ExperimentRunnerSkill,
-    required_context=["experiment_design"],
-    optional_context=["venv_path", "cloned_repo_path"],
-    outputs=["experiment_results", "results_json", "run_log", "output_dir"]
+    inputs_required=["experiment_design"],
+    outputs_produced=["experiment_results", "results_json", "run_log", "output_dir"]
 )

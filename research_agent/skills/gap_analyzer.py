@@ -321,8 +321,6 @@ Format your response clearly with these section headers.
 SKILL_META = SkillMeta(
     name="gap_analyzer",
     description="Analyze research gaps, limitations, and opportunities for innovation",
-    skill_class=GapAnalyzerSkill,
-    required_context=["paper_digests or code_analysis"],
-    optional_context=["comparison_matrix"],
-    outputs=["gap_analysis", "gap_analysis_json", "gap_analysis_report"]
+    inputs_required=[],
+    outputs_produced=["gap_analysis", "gap_analysis_json", "gap_analysis_report"]
 )

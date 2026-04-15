@@ -405,8 +405,6 @@ class AblationStudySkill(BaseSkill):
 SKILL_META = SkillMeta(
     name="ablation_study",
     description="Systematically analyze ablation experiments and component contributions",
-    skill_class=AblationStudySkill,
-    required_context=["experiment_results"],
-    optional_context=[],
-    outputs=["ablation_analysis", "analysis_json", "report", "visualizations"]
+    inputs_required=["experiment_results"],
+    outputs_produced=["ablation_analysis", "analysis_json", "report", "visualizations"]
 )

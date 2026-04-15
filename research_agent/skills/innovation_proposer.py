@@ -334,8 +334,6 @@ Format each proposal clearly with these sections. Be specific and technical.
 SKILL_META = SkillMeta(
     name="innovation_proposer",
     description="Propose innovative research ideas based on gap analysis",
-    skill_class=InnovationProposerSkill,
-    required_context=["gap_analysis"],
-    optional_context=["paper_digests", "code_analysis"],
-    outputs=["innovation_proposals", "innovations_json", "innovations_report"]
+    inputs_required=["gap_analysis"],
+    outputs_produced=["innovation_proposals", "innovations_json", "innovations_report"]
 )

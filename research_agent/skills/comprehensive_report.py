@@ -485,12 +485,6 @@ The abstract should cover: background, problem, proposed method, experiments, an
 SKILL_META = SkillMeta(
     name="comprehensive_report",
     description="Generate comprehensive research report including survey, experiments, and ablation analysis",
-    skill_class=ComprehensiveReportSkill,
-    required_context=[],
-    optional_context=[
-        "paper_digests", "code_analysis", "gap_analysis",
-        "innovation_proposals", "experiment_design",
-        "experiment_results", "ablation_analysis"
-    ],
-    outputs=["report_markdown", "report_latex", "presentation", "report_sections"]
+    inputs_required=[],
+    outputs_produced=["report_markdown", "report_latex", "presentation", "report_sections"]
 )
