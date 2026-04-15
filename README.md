@@ -37,7 +37,7 @@ Most LLM applications in research stop at “copy paper content to model, get a 
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/research-agent.git
+git clone https://github.com/JaredUCAS2025/research-agent.git
 cd research-agent
 ```
 
@@ -140,7 +140,7 @@ Built on **Skill-based Agent Architecture** with:
 
 1. **克隆仓库**
 ```bash
-git clone https://github.com/yourusername/research-agent.git
+git clone https://github.com/JaredUCAS2025/research-agent.git
 cd research-agent
 ```
 
