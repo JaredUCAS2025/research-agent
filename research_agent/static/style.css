@@ -68,6 +68,8 @@ textarea {
     border: 1px solid var(--line);
     border-radius: 28px;
     box-shadow: var(--shadow);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
 }
 
 .eyebrow {
