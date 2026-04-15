@@ -205,6 +205,24 @@ async function submitTask(mode) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
         });
+    } else if (mode === 'research_full') {
+        const query = document.getElementById('research-query').value.trim();
+        if (!query) {
+            showError('请输入 GitHub 搜索关键词');
+            return;
+        }
+        const payload = {
+            session_id: state.sessionId,
+            project_name: document.getElementById('research-project').value || 'my-research',
+            github_query: query,
+            language: document.getElementById('research-language').value.trim() || undefined,
+            min_stars: parseInt(document.getElementById('research-min-stars').value) || undefined,
+        };
+        response = await fetch('/api/research_full', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        });
     } else {
         const formData = new FormData();
         formData.append('session_id', state.sessionId);
@@ -379,6 +397,9 @@ function bindEvents() {
     });
     document.getElementById('run-repo-btn').addEventListener('click', () => {
         submitTask('repo').catch(error => showError(error.message));
+    });
+    document.getElementById('run-research-full-btn').addEventListener('click', () => {
+        submitTask('research_full').catch(error => showError(error.message));
     });
     document.getElementById('chat-form').addEventListener('submit', event => {
         sendChatMessage(event).catch(error => showError(error.message));

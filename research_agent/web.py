@@ -357,6 +357,37 @@ def inspect_repo():
     return jsonify({"task_id": task_id, "session_id": session_id})
 
 
+@app.route("/api/research_full", methods=["POST"])
+def run_research_full():
+    """Run the complete research workflow using harness mode."""
+    payload = request.get_json(silent=True) or {}
+    project_name = (payload.get("project_name") or "my-research").strip()
+    github_query = (payload.get("github_query") or "").strip()
+    session_id = payload.get("session_id")
+    session_id, session = ensure_session(session_id)
+
+    if not github_query:
+        return jsonify({"error": "github_query is required"}), 400
+
+    # Store research parameters in context notes
+    notes = {
+        "github_query": github_query,
+        "language": payload.get("language"),
+        "min_stars": payload.get("min_stars"),
+    }
+
+    task_id = create_task("research_full", project_name, session_id)
+    session["messages"].append({
+        "role": "user",
+        "content": f"开始完整研究流程：{github_query}"
+    })
+    save_session(session)
+
+    # Run using harness mode with research_full workflow
+    executor.submit(run_harness_task, task_id, "research_full", project_name, session_id, notes=notes)
+    return jsonify({"task_id": task_id, "session_id": session_id})
+
+
 @app.route("/api/chat", methods=["POST"])
 def chat():
     payload = request.get_json(silent=True) or {}
@@ -431,7 +462,7 @@ def cancel_task(task_id: str):
 
 def run_harness_task(task_id: str, mode: str, project_name: str, session_id: str,
                      paper_path: Path | None = None, paper_paths: list[Path] | None = None,
-                     repo_path: Path | None = None) -> None:
+                     repo_path: Path | None = None, notes: dict | None = None) -> None:
     """Run a workflow via the harness, pausing at confirm nodes."""
     _, session = ensure_session(session_id)
     agent = ResearchAgent()
@@ -444,6 +475,8 @@ def run_harness_task(task_id: str, mode: str, project_name: str, session_id: str
         context = AgentContext(project_name=project_name, paper_paths=paper_paths)
     elif repo_path:
         context = AgentContext(project_name=project_name, notes={"repo_path": str(repo_path)})
+    elif notes:
+        context = AgentContext(project_name=project_name, notes=notes)
     else:
         context = AgentContext(project_name=project_name)
 

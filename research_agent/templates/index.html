@@ -27,6 +27,7 @@
                     <button class="tab-btn active" data-tab="single" type="button">单论文分析</button>
                     <button class="tab-btn" data-tab="survey" type="button">多论文综述</button>
                     <button class="tab-btn" data-tab="repo" type="button">代码仓库分析</button>
+                    <button class="tab-btn" data-tab="research_full" type="button">完整研究流程</button>
                 </div>
 
                 <section id="single" class="tab-content active">
@@ -66,6 +67,30 @@
                         <small>会生成仓库画像、AST 分析和依赖环境建议</small>
                     </div>
                     <button class="btn-primary" id="run-repo-btn" type="button">分析仓库</button>
+                </section>
+
+                <section id="research_full" class="tab-content">
+                    <div class="form-group">
+                        <label for="research-project">研究项目名称</label>
+                        <input type="text" id="research-project" placeholder="输入研究项目名称" value="my-research">
+                    </div>
+                    <div class="form-group">
+                        <label for="research-query">GitHub 搜索关键词</label>
+                        <input type="text" id="research-query" placeholder="例如：transformer attention mechanism">
+                        <small>搜索相关的 GitHub 仓库进行研究</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="research-language">编程语言（可选）</label>
+                        <input type="text" id="research-language" placeholder="例如：Python">
+                    </div>
+                    <div class="form-group">
+                        <label for="research-min-stars">最小 Star 数（可选）</label>
+                        <input type="number" id="research-min-stars" placeholder="例如：100" min="0">
+                    </div>
+                    <button class="btn-primary" id="run-research-full-btn" type="button">开始完整研究</button>
+                    <small style="color: var(--muted); display: block; margin-top: 8px;">
+                        完整流程包括：GitHub 搜索 → 代码分析 → 创新点提出 → 实验设计 → 环境配置 → 实验执行 → 消融实验 → 综合报告
+                    </small>
                 </section>
             </div>
 
