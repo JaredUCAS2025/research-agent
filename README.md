@@ -103,12 +103,26 @@ print(result.run_id)
 
 ### Core Features
 
+#### Basic Research Workflow
 - **Single Paper Reading**: Fast structured extraction (metadata, claims, methods)
 - **Multi-Paper Survey**: Comparison matrix, conflict detection, survey generation
 - **Scoped Chat**: Conversational follow-ups based on generated artifacts
 - **Repository Analysis**: Code profiling, AST analysis, dependency resolution
 - **Harness Orchestration**: LLM-driven workflow with dynamic routing
 - **Dual Interface**: CLI and Web UI
+
+#### 🆕 Advanced Research Automation (New!)
+- **GitHub Integration**: Automatically search and clone relevant code repositories
+- **Deep Code Analysis**: AST-based analysis with dependency mapping and design pattern recognition
+- **Gap Analysis**: Identify research gaps and limitations in existing methods
+- **Innovation Proposal**: AI-driven generation of novel research ideas with feasibility assessment
+- **Experiment Design**: Automated experimental setup with baseline comparisons and metrics
+- **Environment Setup**: Automatic dependency detection and virtual environment configuration
+- **Experiment Execution**: Run experiments with real-time monitoring and result collection
+- **Ablation Study**: Systematic component analysis with contribution ranking
+- **Comprehensive Reporting**: Generate complete research reports with visualizations
+
+See [ENHANCEMENT_DESIGN.md](ENHANCEMENT_DESIGN.md) and [USAGE_EXAMPLES.md](USAGE_EXAMPLES.md) for details.
 
 ### Architecture
 
