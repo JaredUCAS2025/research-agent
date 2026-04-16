@@ -114,6 +114,11 @@ class SurveyWriterSkill(BaseSkill):
         context.survey = survey
         context.save_text("survey.md", survey)
 
+        # 保存到 notes 以便图表生成器使用
+        context.notes["survey_content"] = survey
+        context.notes["survey_taxonomy"] = taxonomy
+        context.notes["survey_evolution"] = evolution
+
         return SkillResult(self.name, "Multi-stage survey generated.")
 
     @staticmethod

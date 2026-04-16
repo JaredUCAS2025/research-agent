@@ -10,7 +10,8 @@
       "Bash(sed -i 's/context\\\\.set\\(/context.notes.__setitem__\\(/g' research_agent/skills/diagram_generator.py)",
       "Bash(sed -i 's/context\\\\.get\\(/context.notes.get\\(/g' research_agent/skills/ai_image_generator.py)",
       "Bash(sed -i 's/context\\\\.set\\(/context.notes.__setitem__\\(/g' research_agent/skills/ai_image_generator.py)",
-      "Bash(grep -n \"self.llm.generate\\\\|llm.generate\" research_agent/skills/*.py)"
+      "Bash(grep -n \"self.llm.generate\\\\|llm.generate\" research_agent/skills/*.py)",
+      "Bash(xargs ls *)"
     ]
   }
 }

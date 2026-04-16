@@ -34,6 +34,10 @@ class PaperComparatorSkill(BaseSkill):
         timeout = max(180.0, len(context.paper_profiles) * 20.0)
         context.compare_matrix = llm.complete_json(system_prompt=system_prompt, user_prompt=user_prompt, timeout=timeout)
         context.save_json("compare_matrix.json", context.compare_matrix)
+
+        # 同时保存到 notes 以便图表生成器使用
+        context.notes["compare_matrix"] = context.compare_matrix
+
         return SkillResult(self.name, "Comparison matrix generated.")
 
     @staticmethod

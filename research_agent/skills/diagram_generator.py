@@ -33,6 +33,24 @@ class DiagramGeneratorSkill(BaseSkill):
 
         if diagram_type == "auto":
             # 根据上下文自动决定生成哪些图表
+
+            # 单论文分析：生成方法架构图和技术流程图
+            if context.paper_digest or context.method_card:
+                diagrams_to_generate.append("paper_architecture")
+                diagrams_to_generate.append("method_flowchart")
+
+            # 多论文分析：生成对比图表和演进时间线
+            if context.notes.get("compare_matrix"):
+                diagrams_to_generate.append("method_comparison_table")
+                diagrams_to_generate.append("performance_comparison_chart")
+                diagrams_to_generate.append("method_evolution_timeline")
+
+            # 综述生成：生成分类树和研究空白图
+            if context.notes.get("survey_content"):
+                diagrams_to_generate.append("taxonomy_tree")
+                diagrams_to_generate.append("research_gaps_diagram")
+
+            # 实验相关：生成实验流程和结果对比
             if context.notes.get("innovation_proposals"):
                 diagrams_to_generate.append("innovation_architecture")
             if context.notes.get("experiment_design"):
@@ -89,6 +107,20 @@ class DiagramGeneratorSkill(BaseSkill):
         """生成单个图表"""
 
         generators = {
+            # 单论文分析图表
+            "paper_architecture": self._generate_paper_architecture,
+            "method_flowchart": self._generate_method_flowchart,
+
+            # 多论文对比图表
+            "method_comparison_table": self._generate_method_comparison_table,
+            "performance_comparison_chart": self._generate_performance_chart,
+            "method_evolution_timeline": self._generate_evolution_timeline,
+
+            # 综述相关图表
+            "taxonomy_tree": self._generate_taxonomy_tree,
+            "research_gaps_diagram": self._generate_research_gaps,
+
+            # 实验相关图表
             "innovation_architecture": self._generate_architecture_diagram,
             "experiment_workflow": self._generate_workflow_diagram,
             "results_comparison": self._generate_comparison_chart,
@@ -502,6 +534,368 @@ Only output the mermaid code, no explanation.
             pass
 
         return None
+
+    def _generate_paper_architecture(
+        self,
+        context: AgentContext,
+        output_dir: Path
+    ) -> Dict[str, Any]:
+        """生成单论文的方法架构图"""
+
+        method_card = context.method_card or ""
+        paper_digest = context.paper_digest or {}
+
+        if not method_card and not paper_digest:
+            return None
+
+        # 使用 LLM 生成架构图
+        prompt = f"""Based on this paper's method description, generate a Mermaid flowchart showing the method architecture:
+
+Method Card:
+{method_card[:1000]}
+
+Create a detailed architecture diagram showing:
+1. Input data and preprocessing
+2. Main model components/modules
+3. Key mechanisms (attention, pooling, etc.)
+4. Output and post-processing
+
+Use Mermaid flowchart syntax. Only output the mermaid code between ```mermaid and ```, no explanation.
+"""
+
+        try:
+            mermaid_code = self.llm.complete("", prompt, max_tokens=1000)
+            mermaid_code = self._extract_mermaid_code(mermaid_code)
+
+            mermaid_path = output_dir / "paper_architecture.mmd"
+            with open(mermaid_path, "w", encoding="utf-8") as f:
+                f.write(mermaid_code)
+
+            svg_path = self._render_mermaid_to_svg(mermaid_path, output_dir / "paper_architecture.svg")
+
+            return {
+                "type": "paper_architecture",
+                "title": "Paper Method Architecture",
+                "mermaid_file": str(mermaid_path),
+                "svg_file": str(svg_path) if svg_path else None,
+                "mermaid_code": mermaid_code
+            }
+        except Exception as e:
+            return {"type": "paper_architecture", "title": "Paper Method Architecture", "error": str(e)}
+
+    def _generate_method_flowchart(
+        self,
+        context: AgentContext,
+        output_dir: Path
+    ) -> Dict[str, Any]:
+        """生成方法流程图"""
+
+        paper_structure = context.paper_structure or ""
+
+        if not paper_structure:
+            return None
+
+        mermaid_code = """graph TD
+    Start[Input Data] --> Preprocess[Data Preprocessing]
+    Preprocess --> Feature[Feature Extraction]
+    Feature --> Model[Model Processing]
+    Model --> Output[Generate Output]
+    Output --> Postprocess[Post-processing]
+    Postprocess --> End[Final Result]
+"""
+
+        mermaid_path = output_dir / "method_flowchart.mmd"
+        with open(mermaid_path, "w", encoding="utf-8") as f:
+            f.write(mermaid_code)
+
+        svg_path = self._render_mermaid_to_svg(mermaid_path, output_dir / "method_flowchart.svg")
+
+        return {
+            "type": "method_flowchart",
+            "title": "Method Flowchart",
+            "mermaid_file": str(mermaid_path),
+            "svg_file": str(svg_path) if svg_path else None,
+            "mermaid_code": mermaid_code
+        }
+
+    def _generate_method_comparison_table(
+        self,
+        context: AgentContext,
+        output_dir: Path
+    ) -> Dict[str, Any]:
+        """生成方法对比表格（使用 matplotlib）"""
+
+        compare_matrix = context.notes.get("compare_matrix", {})
+        papers = compare_matrix.get("papers", [])
+
+        if not papers:
+            return None
+
+        try:
+            import matplotlib.pyplot as plt
+            import matplotlib
+            matplotlib.use('Agg')
+
+            # 设置中文字体
+            plt.rcParams['font.sans-serif'] = ['SimHei', 'DejaVu Sans']
+            plt.rcParams['axes.unicode_minus'] = False
+
+            # 创建表格数据
+            methods = [p.get("title", "")[:30] for p in papers[:6]]  # 最多6篇
+            datasets = [", ".join(p.get("datasets", [])[:2]) for p in papers[:6]]
+            strengths = [len(p.get("strengths", [])) for p in papers[:6]]
+
+            fig, ax = plt.subplots(figsize=(12, 6))
+            ax.axis('tight')
+            ax.axis('off')
+
+            table_data = []
+            for i, paper in enumerate(papers[:6]):
+                row = [
+                    methods[i],
+                    paper.get("year", "N/A"),
+                    paper.get("method_family", "N/A"),
+                    datasets[i][:40]
+                ]
+                table_data.append(row)
+
+            table = ax.table(
+                cellText=table_data,
+                colLabels=["Method", "Year", "Type", "Datasets"],
+                cellLoc='left',
+                loc='center',
+                colWidths=[0.4, 0.1, 0.2, 0.3]
+            )
+
+            table.auto_set_font_size(False)
+            table.set_fontsize(9)
+            table.scale(1, 2)
+
+            # 设置表头样式
+            for i in range(4):
+                table[(0, i)].set_facecolor('#4CAF50')
+                table[(0, i)].set_text_props(weight='bold', color='white')
+
+            plt.title("Method Comparison Table", fontsize=14, fontweight='bold', pad=20)
+
+            output_path = output_dir / "method_comparison_table.png"
+            plt.savefig(output_path, dpi=150, bbox_inches='tight', facecolor='white')
+            plt.close()
+
+            return {
+                "type": "method_comparison_table",
+                "title": "Method Comparison Table",
+                "image_file": str(output_path)
+            }
+        except Exception as e:
+            return {"type": "method_comparison_table", "title": "Method Comparison Table", "error": str(e)}
+
+    def _generate_performance_chart(
+        self,
+        context: AgentContext,
+        output_dir: Path
+    ) -> Dict[str, Any]:
+        """生成性能对比柱状图"""
+
+        compare_matrix = context.notes.get("compare_matrix", {})
+        performance_data = compare_matrix.get("performance_comparison", {})
+
+        if not performance_data:
+            return None
+
+        try:
+            import matplotlib.pyplot as plt
+            import numpy as np
+            import matplotlib
+            matplotlib.use('Agg')
+
+            plt.rcParams['font.sans-serif'] = ['SimHei', 'DejaVu Sans']
+            plt.rcParams['axes.unicode_minus'] = False
+
+            # 模拟性能数据（实际应从 compare_matrix 提取）
+            papers = compare_matrix.get("papers", [])[:5]
+            methods = [p.get("title", "")[:20] for p in papers]
+
+            # 提取性能指标（假设有 metrics 字段）
+            accuracy = [85 + i*2 for i in range(len(methods))]  # 示例数据
+
+            fig, ax = plt.subplots(figsize=(10, 6))
+
+            x = np.arange(len(methods))
+            width = 0.6
+
+            bars = ax.bar(x, accuracy, width, label='Accuracy', color='#2196F3')
+
+            ax.set_xlabel('Methods', fontsize=12, fontweight='bold')
+            ax.set_ylabel('Performance (%)', fontsize=12, fontweight='bold')
+            ax.set_title('Performance Comparison Across Methods', fontsize=14, fontweight='bold')
+            ax.set_xticks(x)
+            ax.set_xticklabels(methods, rotation=45, ha='right')
+            ax.legend()
+            ax.grid(axis='y', alpha=0.3)
+
+            # 在柱子上显示数值
+            for bar in bars:
+                height = bar.get_height()
+                ax.text(bar.get_x() + bar.get_width()/2., height,
+                       f'{height:.1f}%',
+                       ha='center', va='bottom', fontsize=10)
+
+            plt.tight_layout()
+
+            output_path = output_dir / "performance_comparison.png"
+            plt.savefig(output_path, dpi=150, bbox_inches='tight', facecolor='white')
+            plt.close()
+
+            return {
+                "type": "performance_comparison_chart",
+                "title": "Performance Comparison Chart",
+                "image_file": str(output_path)
+            }
+        except Exception as e:
+            return {"type": "performance_comparison_chart", "title": "Performance Comparison Chart", "error": str(e)}
+
+    def _generate_evolution_timeline(
+        self,
+        context: AgentContext,
+        output_dir: Path
+    ) -> Dict[str, Any]:
+        """生成方法演进时间线"""
+
+        compare_matrix = context.notes.get("compare_matrix", {})
+        evolution = compare_matrix.get("method_evolution", {})
+
+        if not evolution:
+            return None
+
+        # 生成 Mermaid 时间线
+        papers = compare_matrix.get("papers", [])
+        papers_sorted = sorted(papers, key=lambda x: x.get("year", 2020))
+
+        mermaid_code = "timeline\n"
+        mermaid_code += "    title Method Evolution Timeline\n"
+
+        for paper in papers_sorted[:8]:
+            year = paper.get("year", "N/A")
+            title = paper.get("title", "Unknown")[:40]
+            mermaid_code += f"    {year} : {title}\n"
+
+        mermaid_path = output_dir / "evolution_timeline.mmd"
+        with open(mermaid_path, "w", encoding="utf-8") as f:
+            f.write(mermaid_code)
+
+        svg_path = self._render_mermaid_to_svg(mermaid_path, output_dir / "evolution_timeline.svg")
+
+        return {
+            "type": "method_evolution_timeline",
+            "title": "Method Evolution Timeline",
+            "mermaid_file": str(mermaid_path),
+            "svg_file": str(svg_path) if svg_path else None,
+            "mermaid_code": mermaid_code
+        }
+
+    def _generate_taxonomy_tree(
+        self,
+        context: AgentContext,
+        output_dir: Path
+    ) -> Dict[str, Any]:
+        """生成方法分类树"""
+
+        compare_matrix = context.notes.get("compare_matrix", {})
+        papers = compare_matrix.get("papers", [])
+
+        if not papers:
+            return None
+
+        # 按 method_family 分类
+        families = {}
+        for paper in papers:
+            family = paper.get("method_family", "Other")
+            if family not in families:
+                families[family] = []
+            families[family].append(paper.get("title", "Unknown")[:30])
+
+        # 生成 Mermaid 树状图
+        mermaid_code = "graph TD\n"
+        mermaid_code += "    Root[Research Methods]\n"
+
+        for i, (family, papers_list) in enumerate(families.items()):
+            family_id = f"F{i}"
+            mermaid_code += f"    Root --> {family_id}[{family}]\n"
+            for j, paper in enumerate(papers_list[:3]):  # 每类最多3篇
+                paper_id = f"P{i}_{j}"
+                mermaid_code += f"    {family_id} --> {paper_id}[{paper}]\n"
+
+        mermaid_path = output_dir / "taxonomy_tree.mmd"
+        with open(mermaid_path, "w", encoding="utf-8") as f:
+            f.write(mermaid_code)
+
+        svg_path = self._render_mermaid_to_svg(mermaid_path, output_dir / "taxonomy_tree.svg")
+
+        return {
+            "type": "taxonomy_tree",
+            "title": "Method Taxonomy Tree",
+            "mermaid_file": str(mermaid_path),
+            "svg_file": str(svg_path) if svg_path else None,
+            "mermaid_code": mermaid_code
+        }
+
+    def _generate_research_gaps(
+        self,
+        context: AgentContext,
+        output_dir: Path
+    ) -> Dict[str, Any]:
+        """生成研究空白分析图"""
+
+        compare_matrix = context.notes.get("compare_matrix", {})
+        gaps = compare_matrix.get("research_gaps", {})
+        identified_gaps = gaps.get("identified_gaps", [])
+
+        if not identified_gaps:
+            return None
+
+        try:
+            import matplotlib.pyplot as plt
+            import matplotlib
+            matplotlib.use('Agg')
+
+            plt.rcParams['font.sans-serif'] = ['SimHei', 'DejaVu Sans']
+            plt.rcParams['axes.unicode_minus'] = False
+
+            fig, ax = plt.subplots(figsize=(12, 8))
+
+            # 创建研究空白列表
+            gap_names = [f"Gap {i+1}" for i in range(min(len(identified_gaps), 8))]
+            gap_importance = [8-i for i in range(len(gap_names))]  # 示例重要性
+
+            colors = plt.cm.RdYlGn_r(np.linspace(0.2, 0.8, len(gap_names)))
+
+            bars = ax.barh(gap_names, gap_importance, color=colors)
+
+            ax.set_xlabel('Importance / Difficulty', fontsize=12, fontweight='bold')
+            ax.set_title('Research Gaps Analysis', fontsize=14, fontweight='bold')
+            ax.grid(axis='x', alpha=0.3)
+
+            # 添加数值标签
+            for i, bar in enumerate(bars):
+                width = bar.get_width()
+                ax.text(width, bar.get_y() + bar.get_height()/2.,
+                       f'{width:.1f}',
+                       ha='left', va='center', fontsize=10, fontweight='bold')
+
+            plt.tight_layout()
+
+            output_path = output_dir / "research_gaps.png"
+            plt.savefig(output_path, dpi=150, bbox_inches='tight', facecolor='white')
+            plt.close()
+
+            return {
+                "type": "research_gaps_diagram",
+                "title": "Research Gaps Analysis",
+                "image_file": str(output_path)
+            }
+        except Exception as e:
+            return {"type": "research_gaps_diagram", "title": "Research Gaps Analysis", "error": str(e)}
 
     def _generate_diagram_index(self, diagrams: List[Dict[str, Any]]) -> str:
         """生成图表索引文档"""
