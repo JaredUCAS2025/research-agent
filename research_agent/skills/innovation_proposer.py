@@ -17,7 +17,7 @@ class InnovationProposerSkill(BaseSkill):
         super().__init__()
         self.llm = LLMClient()
 
-    def execute(self, context: AgentContext) -> SkillResult:
+    def run(self, context: AgentContext, llm) -> SkillResult:
         """
         提出创新点
 
@@ -86,7 +86,7 @@ class InnovationProposerSkill(BaseSkill):
         prompt = self._build_innovation_prompt(gap_analysis, paper_digests, code_analysis)
 
         try:
-            response = self.llm.generate(prompt, max_tokens=2500)
+            response = self.llm.complete("", prompt, max_tokens=2500)
 
             # 解析创新点
             innovations = {

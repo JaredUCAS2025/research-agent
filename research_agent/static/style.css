@@ -37,20 +37,17 @@ textarea {
 .shell {
     display: grid;
     grid-template-columns: 380px 1fr;
+    grid-template-rows: calc(200vh - 80px);
     gap: 20px;
-    min-height: 100vh;
+    height: 100vh;
     padding: 20px;
 }
 
-.sidebar,
 .workspace-grid {
     display: flex;
     flex-direction: column;
     gap: 20px;
-}
-
-.workspace-grid {
-    min-height: calc(100vh - 40px);
+    overflow-y: auto;
 }
 
 .panel,
@@ -63,12 +60,14 @@ textarea {
 }
 
 .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     padding: 26px;
     background: linear-gradient(180deg, rgba(13, 19, 36, 0.94), rgba(10, 14, 28, 0.92));
     border: 1px solid var(--line);
     border-radius: 28px;
     box-shadow: var(--shadow);
-    max-height: calc(100vh - 40px);
     overflow-y: auto;
 }
 

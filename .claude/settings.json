@@ -1,7 +1,16 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python -c ' *)"
+      "Bash(python -c ' *)",
+      "Bash(python -c \"import hashlib; print\\(hashlib.md5\\(open\\('research_agent/static/style.css', 'rb'\\).read\\(\\)\\).hexdigest\\(\\)\\)\")",
+      "Bash(grep -n \"阅读卡片\\\\|对比矩阵\" research_agent/skills/*.py)",
+      "Bash(python run_web.py)",
+      "Bash(python test_image_generation.py)",
+      "Bash(sed -i 's/context\\\\.get\\(/context.notes.get\\(/g' research_agent/skills/diagram_generator.py)",
+      "Bash(sed -i 's/context\\\\.set\\(/context.notes.__setitem__\\(/g' research_agent/skills/diagram_generator.py)",
+      "Bash(sed -i 's/context\\\\.get\\(/context.notes.get\\(/g' research_agent/skills/ai_image_generator.py)",
+      "Bash(sed -i 's/context\\\\.set\\(/context.notes.__setitem__\\(/g' research_agent/skills/ai_image_generator.py)",
+      "Bash(grep -n \"self.llm.generate\\\\|llm.generate\" research_agent/skills/*.py)"
     ]
   }
 }

@@ -13,7 +13,7 @@ from research_agent.registry import SkillMeta
 class GitHubCloneSkill(BaseSkill):
     """克隆 GitHub 仓库到本地"""
 
-    def execute(self, context: AgentContext) -> SkillResult:
+    def run(self, context: AgentContext, llm) -> SkillResult:
         """
         克隆指定的 GitHub 仓库
 

@@ -18,7 +18,7 @@ class ComprehensiveReportSkill(BaseSkill):
         super().__init__()
         self.llm = LLMClient()
 
-    def execute(self, context: AgentContext) -> SkillResult:
+    def run(self, context: AgentContext, llm) -> SkillResult:
         """
         生成完整报告
 
@@ -108,7 +108,7 @@ The abstract should cover: background, problem, proposed method, experiments, an
 """
 
         try:
-            abstract = self.llm.generate(prompt, max_tokens=300)
+            abstract = self.llm.complete("", prompt, max_tokens=300)
             return abstract
         except:
             return "Abstract generation failed. Please review the detailed sections below."

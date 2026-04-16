@@ -17,7 +17,7 @@ class GapAnalyzerSkill(BaseSkill):
         super().__init__()
         self.llm = LLMClient()
 
-    def execute(self, context: AgentContext) -> SkillResult:
+    def run(self, context: AgentContext, llm) -> SkillResult:
         """
         分析研究空白
 
@@ -92,7 +92,7 @@ class GapAnalyzerSkill(BaseSkill):
 
         # 调用 LLM
         try:
-            response = self.llm.generate(prompt, max_tokens=2000)
+            response = self.llm.complete("", prompt, max_tokens=2000)
 
             # 解析响应
             gap_analysis = {

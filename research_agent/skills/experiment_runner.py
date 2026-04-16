@@ -15,7 +15,7 @@ from research_agent.registry import SkillMeta
 class ExperimentRunnerSkill(BaseSkill):
     """安全地执行实验代码并收集结果"""
 
-    def execute(self, context: AgentContext) -> SkillResult:
+    def run(self, context: AgentContext, llm) -> SkillResult:
         """
         运行实验
 

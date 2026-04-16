@@ -25,7 +25,7 @@ class GitHubSearchSkill(BaseSkill):
         import os
         return os.getenv("GITHUB_TOKEN")
 
-    def execute(self, context: AgentContext) -> SkillResult:
+    def run(self, context: AgentContext, llm) -> SkillResult:
         """
         执行 GitHub 搜索
 

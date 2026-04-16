@@ -14,7 +14,7 @@ from research_agent.registry import SkillMeta
 class EnvironmentSetupSkill(BaseSkill):
     """自动配置实验环境（虚拟环境、依赖安装）"""
 
-    def execute(self, context: AgentContext) -> SkillResult:
+    def run(self, context: AgentContext, llm) -> SkillResult:
         """
         配置实验环境
 

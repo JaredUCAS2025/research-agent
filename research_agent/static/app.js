@@ -104,7 +104,113 @@ function renderArtifacts(artifacts) {
 
 function renderArtifactContent(name) {
     const content = state.currentArtifacts[name] || '';
-    artifactContentEl.innerHTML = renderMaybeJson(content || '暂无该产物');
+
+    // 特殊处理：阅读卡片
+    if (name === 'paper_digest.json' && content) {
+        try {
+            const data = JSON.parse(content);
+            let html = '<div class="paper-digest">';
+
+            if (data.metadata) {
+                html += '<h2>论文信息</h2>';
+                html += `<p><strong>标题：</strong>${escapeHtml(data.metadata.title || '')}</p>`;
+                if (data.metadata.authors) {
+                    html += `<p><strong>作者：</strong>${escapeHtml(data.metadata.authors.join(', '))}</p>`;
+                }
+                if (data.metadata.venue) {
+                    html += `<p><strong>发表于：</strong>${escapeHtml(data.metadata.venue)}</p>`;
+                }
+                if (data.metadata.year) {
+                    html += `<p><strong>年份：</strong>${escapeHtml(data.metadata.year)}</p>`;
+                }
+            }
+
+            if (data.problem) {
+                html += '<h2>研究问题</h2>';
+                html += `<p>${escapeHtml(data.problem)}</p>`;
+            }
+
+            if (data.method) {
+                html += '<h2>方法</h2>';
+                html += `<p>${escapeHtml(data.method)}</p>`;
+            }
+
+            if (data.results) {
+                html += '<h2>结果</h2>';
+                html += `<p>${escapeHtml(data.results)}</p>`;
+            }
+
+            if (data.contributions) {
+                html += '<h2>贡献</h2>';
+                html += '<ul>';
+                data.contributions.forEach(c => {
+                    html += `<li>${escapeHtml(c)}</li>`;
+                });
+                html += '</ul>';
+            }
+
+            html += '</div>';
+            artifactContentEl.innerHTML = html;
+            return;
+        } catch (e) {
+            // 解析失败，继续使用默认 JSON 显示
+        }
+    }
+
+    // 特殊处理：对比矩阵
+    if (name === 'compare_matrix.json' && content) {
+        try {
+            const data = JSON.parse(content);
+            let html = '<div class="compare-matrix">';
+
+            if (data.common_task) {
+                html += '<h2>共同任务</h2>';
+                html += `<p>${escapeHtml(data.common_task)}</p>`;
+            }
+
+            if (data.dimensions && Array.isArray(data.dimensions)) {
+                html += '<h2>对比维度</h2>';
+                data.dimensions.forEach(dim => {
+                    html += `<h3>${escapeHtml(dim.name || '')}</h3>`;
+                    html += `<p>${escapeHtml(dim.summary || '')}</p>`;
+                });
+            }
+
+            if (data.papers && Array.isArray(data.papers)) {
+                html += '<h2>论文列表</h2>';
+                html += '<ul>';
+                data.papers.forEach(paper => {
+                    html += `<li><strong>${escapeHtml(paper.title || '')}</strong>`;
+                    if (paper.year) html += ` (${escapeHtml(paper.year)})`;
+                    html += '</li>';
+                });
+                html += '</ul>';
+            }
+
+            html += '</div>';
+            artifactContentEl.innerHTML = html;
+            return;
+        } catch (e) {
+            // 解析失败，继续使用默认 JSON 显示
+        }
+    }
+
+    // 根据文件扩展名决定渲染方式
+    if (name.endsWith('.json')) {
+        // JSON 文件：格式化显示
+        try {
+            const parsed = JSON.parse(content);
+            artifactContentEl.innerHTML = `<pre>${escapeHtml(JSON.stringify(parsed, null, 2))}</pre>`;
+        } catch {
+            artifactContentEl.innerHTML = `<pre>${escapeHtml(content || '暂无该产物')}</pre>`;
+        }
+    } else if (name.endsWith('.md')) {
+        // Markdown 文件：渲染为 HTML
+        artifactContentEl.innerHTML = renderMarkdown(content || '暂无该产物');
+    } else {
+        // 其他文件：纯文本显示
+        artifactContentEl.innerHTML = `<pre>${escapeHtml(content || '暂无该产物')}</pre>`;
+    }
 }
 
 function setTaskState(task) {

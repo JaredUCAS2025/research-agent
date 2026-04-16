@@ -17,7 +17,7 @@ class ExperimentDesignerSkill(BaseSkill):
         super().__init__()
         self.llm = LLMClient()
 
-    def execute(self, context: AgentContext) -> SkillResult:
+    def run(self, context: AgentContext, llm) -> SkillResult:
         """
         设计实验方案
 
@@ -98,7 +98,7 @@ class ExperimentDesignerSkill(BaseSkill):
         prompt = self._build_design_prompt(innovation, context)
 
         try:
-            response = self.llm.generate(prompt, max_tokens=3000)
+            response = self.llm.complete("", prompt, max_tokens=3000)
 
             # 解析实验设计
             design = {

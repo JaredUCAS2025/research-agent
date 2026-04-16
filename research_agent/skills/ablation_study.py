@@ -18,7 +18,7 @@ class AblationStudySkill(BaseSkill):
         super().__init__()
         self.llm = LLMClient()
 
-    def execute(self, context: AgentContext) -> SkillResult:
+    def run(self, context: AgentContext, llm) -> SkillResult:
         """
         执行消融实验分析
 

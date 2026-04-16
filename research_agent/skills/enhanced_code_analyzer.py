@@ -18,7 +18,7 @@ class EnhancedCodeAnalyzerSkill(BaseSkill):
         super().__init__()
         self.llm = LLMClient()
 
-    def execute(self, context: AgentContext) -> SkillResult:
+    def run(self, context: AgentContext, llm) -> SkillResult:
         """
         深度分析代码仓库
 
@@ -238,7 +238,7 @@ Keep the analysis concise and focused on technical details.
 """
 
         try:
-            response = self.llm.generate(prompt, max_tokens=1000)
+            response = self.llm.complete("", prompt, max_tokens=1000)
             return response
         except Exception as e:
             return f"LLM analysis failed: {str(e)}"

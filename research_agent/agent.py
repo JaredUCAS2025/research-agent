@@ -20,6 +20,19 @@ from .skills.repo_skills import (
     RepoIngestorSkill, REPO_INGESTOR_META,
 )
 from .skills.survey_writer import SurveyWriterSkill, SURVEY_WRITER_META
+# New enhanced skills
+from .skills.github_search import GitHubSearchSkill, SKILL_META as GITHUB_SEARCH_META
+from .skills.github_clone import GitHubCloneSkill, SKILL_META as GITHUB_CLONE_META
+from .skills.enhanced_code_analyzer import EnhancedCodeAnalyzerSkill, SKILL_META as ENHANCED_CODE_ANALYZER_META
+from .skills.gap_analyzer import GapAnalyzerSkill, SKILL_META as GAP_ANALYZER_META
+from .skills.innovation_proposer import InnovationProposerSkill, SKILL_META as INNOVATION_PROPOSER_META
+from .skills.experiment_designer import ExperimentDesignerSkill, SKILL_META as EXPERIMENT_DESIGNER_META
+from .skills.environment_setup import EnvironmentSetupSkill, SKILL_META as ENVIRONMENT_SETUP_META
+from .skills.experiment_runner import ExperimentRunnerSkill, SKILL_META as EXPERIMENT_RUNNER_META
+from .skills.ablation_study import AblationStudySkill, SKILL_META as ABLATION_STUDY_META
+from .skills.comprehensive_report import ComprehensiveReportSkill, SKILL_META as COMPREHENSIVE_REPORT_META
+from .skills.diagram_generator import DiagramGeneratorSkill, SKILL_META as DIAGRAM_GENERATOR_META
+from .skills.ai_image_generator import AIImageGeneratorSkill, SKILL_META as AI_IMAGE_GENERATOR_META
 from .workflows import BUILTIN_GRAPHS
 
 
@@ -47,6 +60,7 @@ class ResearchAgent:
         # --- Skill Registry for harness mode ---
         self.registry = SkillRegistry()
         _skill_meta_pairs = [
+            # Original skills
             (IngestPaperSkill(), INGEST_PAPER_META),
             (PaperDigestSkill(), PAPER_DIGEST_META),
             (PaperComparatorSkill(), PAPER_COMPARATOR_META),
@@ -55,6 +69,20 @@ class ResearchAgent:
             (RepoIngestorSkill(), REPO_INGESTOR_META),
             (ASTAnalyzerSkill(), AST_ANALYZER_META),
             (EnvResolverSkill(), ENV_RESOLVER_META),
+            # New enhanced skills
+            (GitHubSearchSkill(), GITHUB_SEARCH_META),
+            (GitHubCloneSkill(), GITHUB_CLONE_META),
+            (EnhancedCodeAnalyzerSkill(), ENHANCED_CODE_ANALYZER_META),
+            (GapAnalyzerSkill(), GAP_ANALYZER_META),
+            (InnovationProposerSkill(), INNOVATION_PROPOSER_META),
+            (ExperimentDesignerSkill(), EXPERIMENT_DESIGNER_META),
+            (EnvironmentSetupSkill(), ENVIRONMENT_SETUP_META),
+            (ExperimentRunnerSkill(), EXPERIMENT_RUNNER_META),
+            (AblationStudySkill(), ABLATION_STUDY_META),
+            (ComprehensiveReportSkill(), COMPREHENSIVE_REPORT_META),
+            # Visualization skills
+            (DiagramGeneratorSkill(), DIAGRAM_GENERATOR_META),
+            (AIImageGeneratorSkill(), AI_IMAGE_GENERATOR_META),
         ]
         for skill_inst, meta in _skill_meta_pairs:
             self.registry.register(skill_inst, meta)
