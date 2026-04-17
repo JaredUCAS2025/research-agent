@@ -11,7 +11,11 @@
       "Bash(sed -i 's/context\\\\.get\\(/context.notes.get\\(/g' research_agent/skills/ai_image_generator.py)",
       "Bash(sed -i 's/context\\\\.set\\(/context.notes.__setitem__\\(/g' research_agent/skills/ai_image_generator.py)",
       "Bash(grep -n \"self.llm.generate\\\\|llm.generate\" research_agent/skills/*.py)",
-      "Bash(xargs ls *)"
+      "Bash(xargs ls *)",
+      "Bash(python -c \"from research_agent.agent import ResearchAgent; agent = ResearchAgent\\(\\); print\\('Registered skills:', list\\(agent.registry.skills.keys\\(\\)\\)\\)\")",
+      "Bash(python -c \"from research_agent.agent import ResearchAgent; agent = ResearchAgent\\(\\); print\\('\\\\n'.join\\(sorted\\(agent.registry.skills.keys\\(\\)\\)\\)\\)\")",
+      "Bash(python -c \"from research_agent.agent import ResearchAgent; agent = ResearchAgent\\(\\); print\\('\\\\n'.join\\(sorted\\(agent.registry._skills.keys\\(\\)\\)\\)\\)\")",
+      "Bash(python test_diagram_generation.py)"
     ]
   }
 }

@@ -122,13 +122,15 @@ print(result.run_id)
 - **Ablation Study**: Systematic component analysis with contribution ranking
 - **Comprehensive Reporting**: Generate complete research reports with visualizations
 
-#### 🎨 Image Generation (New!)
-- **Academic Diagrams**: Auto-generate architecture diagrams, flowcharts, comparison charts using Mermaid/Matplotlib
+#### 🎨 Automatic Diagram Generation (New!)
+- **Integrated Workflow**: Diagrams are automatically generated during paper analysis and survey workflows
+- **Single Paper**: Architecture diagrams and method flowcharts
+- **Multi-Paper Survey**: Comparison tables, performance charts, evolution timelines, taxonomy trees, research gap diagrams
+- **Academic Diagrams**: Auto-generate using Mermaid (flowcharts, architecture) and Matplotlib (charts, heatmaps)
 - **AI Image Generation**: Create concept illustrations using DALL-E 3, Tongyi Wanxiang, or Stable Diffusion
-- **Visualization Suite**: Heatmaps, bar charts, system overviews for papers and presentations
 - **Export Formats**: SVG, PNG, PDF for direct use in LaTeX/Word documents
 
-See [IMAGE_GENERATION_GUIDE.md](IMAGE_GENERATION_GUIDE.md) for setup and usage.
+All diagrams are saved in the `diagrams/` folder within each run directory. See [IMAGE_GENERATION_GUIDE.md](IMAGE_GENERATION_GUIDE.md) for advanced usage.
 
 See [ENHANCEMENT_DESIGN.md](ENHANCEMENT_DESIGN.md) and [USAGE_EXAMPLES.md](USAGE_EXAMPLES.md) for details.
 

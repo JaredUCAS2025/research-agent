@@ -9,7 +9,7 @@ from .graph import StateNode, WorkflowGraph
 
 
 def single_paper_graph() -> WorkflowGraph:
-    """Single-paper fast analysis: ingest → digest → diagrams → confirm → end."""
+    """Single-paper fast analysis: ingest → digest → diagrams → end."""
     g = WorkflowGraph(name="single", entry="start")
     g.add(StateNode(name="start", node_type="start", transitions={"default": "ingest"}))
     g.add(StateNode(
@@ -22,19 +22,14 @@ def single_paper_graph() -> WorkflowGraph:
     ))
     g.add(StateNode(
         name="generate_diagrams", node_type="skill", skill_name="diagram_generator",
-        transitions={"default": "confirm_done"},
-    ))
-    g.add(StateNode(
-        name="confirm_done", node_type="confirm",
-        confirm_message="单论文分析已完成（含图表生成），是否继续？",
-        transitions={"continue": "end", "cancel": "end"},
+        transitions={"default": "end"},
     ))
     g.add(StateNode(name="end", node_type="end"))
     return g
 
 
 def survey_graph() -> WorkflowGraph:
-    """Multi-paper survey: batch digest → confirm → compare → contradiction → survey → diagrams → confirm → end."""
+    """Multi-paper survey: batch digest → confirm → compare → contradiction → survey → diagrams → end."""
     g = WorkflowGraph(name="survey", entry="start")
     g.add(StateNode(name="start", node_type="start", transitions={"default": "per_paper_digest"}))
     g.add(StateNode(
@@ -45,7 +40,7 @@ def survey_graph() -> WorkflowGraph:
     ))
     g.add(StateNode(
         name="confirm_aggregation", node_type="confirm",
-        confirm_message="所有论文已完成快速分析，即将进入多论文聚合阶段（对比矩阵、冲突识别、综述生成）。是否继续？",
+        confirm_message="所有论文已完成快速分析，即将进入多论文聚合阶段（对比矩阵、冲突识别、综述生成、图表生成）。是否继续？",
         transitions={"continue": "comparator", "cancel": "end"},
     ))
     g.add(StateNode(
@@ -62,12 +57,7 @@ def survey_graph() -> WorkflowGraph:
     ))
     g.add(StateNode(
         name="generate_diagrams", node_type="skill", skill_name="diagram_generator",
-        transitions={"default": "confirm_done"},
-    ))
-    g.add(StateNode(
-        name="confirm_done", node_type="confirm",
-        confirm_message="多论文综述已完成（含对比图表），是否继续？",
-        transitions={"continue": "end", "cancel": "end"},
+        transitions={"default": "end"},
     ))
     g.add(StateNode(name="end", node_type="end"))
     return g
