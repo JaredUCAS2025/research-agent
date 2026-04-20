@@ -16,7 +16,10 @@
       "Bash(python -c \"from research_agent.agent import ResearchAgent; agent = ResearchAgent\\(\\); print\\('\\\\n'.join\\(sorted\\(agent.registry.skills.keys\\(\\)\\)\\)\\)\")",
       "Bash(python -c \"from research_agent.agent import ResearchAgent; agent = ResearchAgent\\(\\); print\\('\\\\n'.join\\(sorted\\(agent.registry._skills.keys\\(\\)\\)\\)\\)\")",
       "Bash(python test_diagram_generation.py)",
-      "Bash(python -c \"from research_agent.skills.diagram_generator import DiagramGeneratorSkill; print\\('Import successful'\\)\")"
+      "Bash(python -c \"from research_agent.skills.diagram_generator import DiagramGeneratorSkill; print\\('Import successful'\\)\")",
+      "Bash(git commit -m ' *)",
+      "Bash(python -c \"from research_agent.workflows import survey_graph; g = survey_graph\\(\\); print\\('Nodes:', [n.name for n in g.nodes]\\); print\\('survey_writer transitions:', [n.transitions for n in g.nodes if n.name == 'survey_writer']\\)\")",
+      "Bash(python -c \"from research_agent.agent import SkillRegistry; print\\('diagram_generator registered:', 'diagram_generator' in SkillRegistry._skills\\)\")"
     ]
   }
 }

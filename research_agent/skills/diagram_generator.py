@@ -26,6 +26,16 @@ class DiagramGeneratorSkill(BaseSkill):
         Args:
             context: 可以包含 diagram_type, diagram_data, innovation_proposals, experiment_design 等
         """
+        print("\n" + "="*80)
+        print("🎨 DIAGRAM GENERATOR STARTED")
+        print("="*80)
+
+        # Debug: Print context state
+        print(f"📊 Context state:")
+        print(f"  - has paper_digest: {hasattr(context, 'paper_digest') and context.paper_digest}")
+        print(f"  - has method_card: {hasattr(context, 'method_card') and context.method_card}")
+        print(f"  - notes keys: {list(context.notes.keys())}")
+
         diagram_type = context.notes.get("diagram_type", "auto")
 
         # 自动检测需要生成的图表类型
@@ -35,34 +45,50 @@ class DiagramGeneratorSkill(BaseSkill):
             # 根据上下文自动决定生成哪些图表
 
             # 单论文分析：生成方法架构图和技术流程图
-            if context.paper_digest or context.method_card:
+            if hasattr(context, 'paper_digest') and context.paper_digest:
+                print("✅ Found paper_digest, adding architecture & flowchart")
                 diagrams_to_generate.append("paper_architecture")
                 diagrams_to_generate.append("method_flowchart")
 
+            if hasattr(context, 'method_card') and context.method_card:
+                print("✅ Found method_card, adding flowchart")
+                if "method_flowchart" not in diagrams_to_generate:
+                    diagrams_to_generate.append("method_flowchart")
+
             # 多论文分析：生成对比图表和演进时间线
             if context.notes.get("compare_matrix"):
+                print("✅ Found compare_matrix, adding comparison diagrams")
                 diagrams_to_generate.append("method_comparison_table")
                 diagrams_to_generate.append("performance_comparison_chart")
                 diagrams_to_generate.append("method_evolution_timeline")
 
             # 综述生成：生成分类树和研究空白图
             if context.notes.get("survey_content"):
+                print("✅ Found survey_content, adding taxonomy & gaps diagrams")
                 diagrams_to_generate.append("taxonomy_tree")
                 diagrams_to_generate.append("research_gaps_diagram")
 
             # 实验相关：生成实验流程和结果对比
             if context.notes.get("innovation_proposals"):
+                print("✅ Found innovation_proposals, adding innovation diagram")
                 diagrams_to_generate.append("innovation_architecture")
             if context.notes.get("experiment_design"):
+                print("✅ Found experiment_design, adding workflow diagram")
                 diagrams_to_generate.append("experiment_workflow")
             if context.notes.get("experiment_results"):
+                print("✅ Found experiment_results, adding results diagram")
                 diagrams_to_generate.append("results_comparison")
             if context.notes.get("ablation_analysis"):
+                print("✅ Found ablation_analysis, adding heatmap")
                 diagrams_to_generate.append("ablation_heatmap")
         else:
             diagrams_to_generate = [diagram_type]
 
+        print(f"\n📋 Total diagrams to generate: {len(diagrams_to_generate)}")
+        print(f"📋 Diagram types: {diagrams_to_generate}")
+
         if not diagrams_to_generate:
+            print("⚠️ No diagrams to generate!")
             return SkillResult(
                 name="diagram_generator",
                 message="No diagrams to generate based on context"
@@ -72,17 +98,35 @@ class DiagramGeneratorSkill(BaseSkill):
             generated_diagrams = []
             diagram_dir = context.run_dir / "diagrams"
             diagram_dir.mkdir(exist_ok=True)
+            print(f"\n📁 Diagram directory: {diagram_dir}")
 
             for dtype in diagrams_to_generate:
-                result = self._generate_diagram(dtype, context, diagram_dir)
-                if result:
-                    generated_diagrams.append(result)
+                print(f"\n🎨 Generating {dtype}...")
+                try:
+                    result = self._generate_diagram(dtype, context, diagram_dir)
+                    if result:
+                        print(f"✅ Successfully generated {dtype}: {result.get('image_file', 'N/A')}")
+                        generated_diagrams.append(result)
+                    else:
+                        print(f"⚠️ No result returned for {dtype}")
+                except Exception as e:
+                    print(f"❌ Error generating {dtype}: {e}")
+                    import traceback
+                    traceback.print_exc()
+
+            print(f"\n📊 Total diagrams generated: {len(generated_diagrams)}")
 
             # 更新 context
             context.notes.__setitem__("generated_diagrams", generated_diagrams)
 
             # 将图表嵌入到相关文档中
+            print("\n📝 Embedding diagrams into documents...")
             self._embed_diagrams_in_documents(context, generated_diagrams)
+            print("✅ Diagrams embedded successfully")
+
+            print("="*80)
+            print(f"🎉 DIAGRAM GENERATOR COMPLETED: {len(generated_diagrams)} diagrams")
+            print("="*80 + "\n")
 
             return SkillResult(
                 name="diagram_generator",
@@ -90,6 +134,10 @@ class DiagramGeneratorSkill(BaseSkill):
             )
 
         except Exception as e:
+            print(f"\n❌ DIAGRAM GENERATOR FAILED: {e}")
+            import traceback
+            traceback.print_exc()
+            print("="*80 + "\n")
             return SkillResult(
                 name="diagram_generator",
                 message=f"Diagram generation failed: {str(e)}"
