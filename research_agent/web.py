@@ -11,7 +11,7 @@ import uuid
 from typing import Optional
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile, WebSocket, WebSocketDisconnect
-from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi import Request
@@ -191,6 +191,12 @@ def serialize_artifacts(run_dir: Path) -> dict[str, str]:
     for pattern in ["paper_*_profile.md", "paper_*_profile.json", "survey_partial_*.md"]:
         for path in run_dir.glob(pattern):
             artifacts[path.name] = path.read_text(encoding="utf-8")
+
+    # 添加图表索引
+    diagram_index = run_dir / "diagrams" / "diagram_index.md"
+    if diagram_index.exists():
+        artifacts["diagrams/diagram_index.md"] = diagram_index.read_text(encoding="utf-8")
+
     return artifacts
 
 
@@ -478,6 +484,15 @@ async def get_task(task_id: str):
     if task is None:
         raise HTTPException(status_code=404, detail="Task not found")
     return task
+
+
+@app.get("/api/diagrams/{run_id}/{filename}")
+async def get_diagram(run_id: str, filename: str):
+    """Serve diagram files from workspace/runs/{run_id}/diagrams/"""
+    diagram_path = Path("workspace/runs") / run_id / "diagrams" / filename
+    if not diagram_path.exists():
+        raise HTTPException(status_code=404, detail="Diagram not found")
+    return FileResponse(diagram_path)
 
 
 @app.get("/api/history")

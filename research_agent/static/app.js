@@ -1,8 +1,10 @@
 const state = {
     sessionId: '',
     currentTaskId: '',
+    currentRunId: '',
     currentArtifacts: {},
     artifactOrder: [
+        'diagram_index.md',
         'paper_digest.json',
         'summary.md',
         'claims.md',
@@ -112,10 +114,14 @@ function renderArtifactContent(name) {
             let html = '<div class="paper-digest">';
 
             if (data.metadata) {
-                html += '<h2>论文信息</h2>';
+                html += '<div class="section">';
+                html += '<h2>📄 论文信息</h2>';
                 html += `<p><strong>标题：</strong>${escapeHtml(data.metadata.title || '')}</p>`;
                 if (data.metadata.authors) {
-                    html += `<p><strong>作者：</strong>${escapeHtml(data.metadata.authors.join(', '))}</p>`;
+                    const authors = Array.isArray(data.metadata.authors)
+                        ? data.metadata.authors.join(', ')
+                        : data.metadata.authors;
+                    html += `<p><strong>作者：</strong>${escapeHtml(authors)}</p>`;
                 }
                 if (data.metadata.venue) {
                     html += `<p><strong>发表于：</strong>${escapeHtml(data.metadata.venue)}</p>`;
@@ -123,36 +129,53 @@ function renderArtifactContent(name) {
                 if (data.metadata.year) {
                     html += `<p><strong>年份：</strong>${escapeHtml(data.metadata.year)}</p>`;
                 }
+                if (data.metadata.keywords) {
+                    const keywords = Array.isArray(data.metadata.keywords)
+                        ? data.metadata.keywords.join(', ')
+                        : data.metadata.keywords;
+                    html += `<p><strong>关键词：</strong>${escapeHtml(keywords)}</p>`;
+                }
+                html += '</div>';
             }
 
             if (data.problem) {
-                html += '<h2>研究问题</h2>';
+                html += '<div class="section">';
+                html += '<h2>❓ 研究问题</h2>';
                 html += `<p>${escapeHtml(data.problem)}</p>`;
+                html += '</div>';
             }
 
             if (data.method) {
-                html += '<h2>方法</h2>';
+                html += '<div class="section">';
+                html += '<h2>🔬 方法</h2>';
                 html += `<p>${escapeHtml(data.method)}</p>`;
+                html += '</div>';
             }
 
             if (data.results) {
-                html += '<h2>结果</h2>';
+                html += '<div class="section">';
+                html += '<h2>📊 结果</h2>';
                 html += `<p>${escapeHtml(data.results)}</p>`;
+                html += '</div>';
             }
 
-            if (data.contributions) {
-                html += '<h2>贡献</h2>';
+            if (data.contributions && Array.isArray(data.contributions) && data.contributions.length > 0) {
+                html += '<div class="section">';
+                html += '<h2>✨ 贡献</h2>';
                 html += '<ul>';
                 data.contributions.forEach(c => {
                     html += `<li>${escapeHtml(c)}</li>`;
                 });
                 html += '</ul>';
+                html += '</div>';
             }
 
             html += '</div>';
             artifactContentEl.innerHTML = html;
             return;
         } catch (e) {
+            console.error('Failed to parse paper_digest.json:', e);
+            console.log('Content:', content);
             // 解析失败，继续使用默认 JSON 显示
         }
     }
@@ -193,6 +216,38 @@ function renderArtifactContent(name) {
         } catch (e) {
             // 解析失败，继续使用默认 JSON 显示
         }
+    }
+
+    // 特殊处理：图表索引
+    if (name === 'diagram_index.md' && content) {
+        // 解析 Markdown 中的图表链接并渲染图片
+        let html = '<div class="diagram-gallery">';
+        html += '<h2>生成的图表</h2>';
+
+        // 提取所有图片链接
+        const imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
+        let match;
+        let hasImages = false;
+
+        while ((match = imageRegex.exec(content)) !== null) {
+            hasImages = true;
+            const altText = match[1];
+            const imagePath = match[2];
+            // 构建完整的图片 URL
+            const imageUrl = `/api/diagrams/${state.currentRunId}/${imagePath.split('/').pop()}`;
+            html += `<div class="diagram-item">`;
+            html += `<h3>${escapeHtml(altText)}</h3>`;
+            html += `<img src="${imageUrl}" alt="${escapeHtml(altText)}" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px; padding: 8px; background: white;">`;
+            html += `</div>`;
+        }
+
+        if (!hasImages) {
+            html += '<p>暂无生成的图表</p>';
+        }
+
+        html += '</div>';
+        artifactContentEl.innerHTML = html;
+        return;
     }
 
     // 根据文件扩展名决定渲染方式
@@ -366,6 +421,7 @@ async function submitTask(mode) {
         throw new Error(data.error || '任务提交失败');
     }
     state.currentTaskId = data.task_id;
+    state.currentRunId = data.run_id || data.task_id;
     state.sessionId = data.session_id;
     sessionIdEl.textContent = state.sessionId;
     await refreshSession();
