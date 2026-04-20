@@ -21,7 +21,7 @@ class DiagramGeneratorSkill(BaseSkill):
 
     def run(self, context: AgentContext, llm) -> SkillResult:
         """
-        生成学术图表
+        生成学术图表并嵌入到相关文档中
 
         Args:
             context: 可以包含 diagram_type, diagram_data, innovation_proposals, experiment_design 等
@@ -78,18 +78,15 @@ class DiagramGeneratorSkill(BaseSkill):
                 if result:
                     generated_diagrams.append(result)
 
-            # 生成图表索引
-            index = self._generate_diagram_index(generated_diagrams)
-            index_path = diagram_dir / "diagram_index.md"
-            with open(index_path, "w", encoding="utf-8") as f:
-                f.write(index)
-
             # 更新 context
             context.notes.__setitem__("generated_diagrams", generated_diagrams)
 
+            # 将图表嵌入到相关文档中
+            self._embed_diagrams_in_documents(context, generated_diagrams)
+
             return SkillResult(
                 name="diagram_generator",
-                message=f"Successfully generated {len(generated_diagrams)} diagrams"
+                message=f"Successfully generated {len(generated_diagrams)} diagrams and embedded them in documents"
             )
 
         except Exception as e:
@@ -928,6 +925,63 @@ Use Mermaid flowchart syntax. Only output the mermaid code between ```mermaid an
             index += "---\n\n"
 
         return index
+
+    def _embed_diagrams_in_documents(self, context: AgentContext, diagrams: List[Dict[str, Any]]):
+        """将生成的图表嵌入到相关文档中"""
+
+        # 构建图表引用部分
+        diagram_section = "\n\n---\n\n## 📊 相关图表\n\n"
+
+        for diagram in diagrams:
+            title = diagram.get('title', 'Untitled')
+            diagram_type = diagram.get('type', 'unknown')
+
+            diagram_section += f"### {title}\n\n"
+
+            # 优先使用图片文件
+            if diagram.get('image_file'):
+                # 使用相对路径
+                rel_path = f"diagrams/{Path(diagram['image_file']).name}"
+                diagram_section += f"![{title}]({rel_path})\n\n"
+
+            # 如果有 SVG 文件
+            elif diagram.get('svg_file'):
+                rel_path = f"diagrams/{Path(diagram['svg_file']).name}"
+                diagram_section += f"![{title}]({rel_path})\n\n"
+
+            # 如果只有 Mermaid 代码，直接嵌入
+            elif diagram.get('mermaid_code'):
+                diagram_section += "```mermaid\n"
+                diagram_section += diagram['mermaid_code']
+                diagram_section += "\n```\n\n"
+
+            if diagram.get('error'):
+                diagram_section += f"*生成失败: {diagram['error']}*\n\n"
+
+        # 将图表嵌入到综述文档
+        if context.notes.get("survey_content"):
+            survey_path = context.run_dir / "survey.md"
+            if survey_path.exists():
+                content = survey_path.read_text(encoding="utf-8")
+                content += diagram_section
+                survey_path.write_text(content, encoding="utf-8")
+
+        # 将图表嵌入到对比报告
+        if context.notes.get("compare_matrix"):
+            report_path = context.run_dir / "comparison_report.md"
+            if report_path.exists():
+                content = report_path.read_text(encoding="utf-8")
+                content += diagram_section
+                report_path.write_text(content, encoding="utf-8")
+
+        # 将图表嵌入到单论文摘要
+        if context.paper_digest:
+            # 查找 paper_*_profile.md 文件
+            for profile_file in context.run_dir.glob("paper_*_profile.md"):
+                content = profile_file.read_text(encoding="utf-8")
+                content += diagram_section
+                profile_file.write_text(content, encoding="utf-8")
+                break  # 只处理第一个（单论文模式）
 
 
 # 注册技能
