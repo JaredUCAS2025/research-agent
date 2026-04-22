@@ -66,9 +66,9 @@ class Harness:
         The caller should later invoke :meth:`resume` to continue.
         """
         self.state.status = "running"
-        print(f"\n{'='*80}")
-        print(f"🚀 Harness starting workflow: {self.graph.name}")
-        print(f"{'='*80}")
+        print(f"\n{'='*80}", flush=True)
+        print(f"🚀 Harness starting workflow: {self.graph.name}", flush=True)
+        print(f"{'='*80}", flush=True)
 
         while True:
             if self.state.step_count >= self.state.max_steps:
@@ -76,25 +76,25 @@ class Harness:
                 raise RuntimeError(f"Harness exceeded max steps ({self.state.max_steps})")
 
             node = self.graph.nodes[self.state.current_node]
-            print(f"\n➡️  Step {self.state.step_count}: Node '{self.state.current_node}' (type: {node.node_type})")
+            print(f"\n➡️  Step {self.state.step_count}: Node '{self.state.current_node}' (type: {node.node_type})", flush=True)
 
             # --- terminal ---
             if node.node_type == "end":
-                print(f"🏁 Reached end node, finalizing...")
+                print(f"🏁 Reached end node, finalizing...", flush=True)
                 self._finalize()
                 break
 
             # --- start: just follow default transition ---
             if node.node_type == "start":
                 next_node = node.transitions["default"]
-                print(f"   Start node → {next_node}")
+                print(f"   Start node → {next_node}", flush=True)
                 self.state.current_node = next_node
                 self.state.step_count += 1
                 continue
 
             # --- confirm: pause for user ---
             if node.node_type == "confirm":
-                print(f"⏸️  Confirm node reached: {node.confirm_message}")
+                print(f"⏸️  Confirm node reached: {node.confirm_message}", flush=True)
                 self.state.status = "awaiting_confirmation"
                 self.context.add_trace(
                     harness="confirm", node=node.name, message=node.confirm_message,
@@ -105,14 +105,14 @@ class Harness:
             if node.node_type == "skill":
                 self._execute_skill(node)
                 next_node = node.transitions["default"]
-                print(f"   Skill completed → {next_node}")
+                print(f"   Skill completed → {next_node}", flush=True)
                 self.state.current_node = next_node
 
             # --- batch: execute skills for each item in a list ---
             elif node.node_type == "batch":
                 self._execute_batch(node)
                 next_node = node.transitions["default"]
-                print(f"   Batch completed → {next_node}")
+                print(f"   Batch completed → {next_node}", flush=True)
                 self.state.current_node = next_node
 
             # --- decision: ask LLM planner ---
@@ -127,7 +127,7 @@ class Harness:
                     harness="decision", node=node.name, choice=choice,
                 )
                 next_node = node.transitions[choice]
-                print(f"   Decision: {choice} → {next_node}")
+                print(f"   Decision: {choice} → {next_node}", flush=True)
                 self.state.current_node = next_node
 
             self.state.step_count += 1
@@ -170,12 +170,12 @@ class Harness:
     def _execute_skill(self, node: StateNode) -> None:
         """Run a single skill node."""
         skill, meta = self.registry.get(node.skill_name)
-        print(f"\n🔧 Harness executing skill: {node.skill_name}")
+        print(f"\n🔧 Harness executing skill: {node.skill_name}", flush=True)
         total = self._count_skill_nodes()
         progress = min(self.state.step_count / max(total, 1), 0.98)
         self.context.report_progress(skill.name, f"正在执行 {skill.name}", progress)
         result = skill.run(context=self.context, llm=self.llm)
-        print(f"✅ Skill {node.skill_name} completed: {result.message}")
+        print(f"✅ Skill {node.skill_name} completed: {result.message}", flush=True)
         self.context.add_trace(
             harness="skill", skill=result.name, message=result.message,
             step=self.state.step_count,

@@ -42,11 +42,13 @@ class ResearchAgent:
         self.single_paper_skills: list[BaseSkill] = [
             IngestPaperSkill(),
             PaperDigestSkill(),
+            DiagramGeneratorSkill(),
         ]
         self.multi_paper_skills: list[BaseSkill] = [
             PaperComparatorSkill(),
             ContradictionDetectorSkill(),
             SurveyWriterSkill(),
+            DiagramGeneratorSkill(),
         ]
         self.repo_skills: list[BaseSkill] = [
             RepoIngestorSkill(),
