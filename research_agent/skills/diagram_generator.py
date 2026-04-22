@@ -27,11 +27,11 @@ class DiagramGeneratorSkill(BaseSkill):
             context: 可以包含 diagram_type, diagram_data, innovation_proposals, experiment_design 等
         """
         print("\n" + "="*80, flush=True)
-        print("🎨 DIAGRAM GENERATOR STARTED", flush=True)
+        print("[DIAGRAM GENERATOR] STARTED", flush=True)
         print("="*80, flush=True)
 
         # Debug: Print context state
-        print(f"📊 Context state:", flush=True)
+        print(f"[DEBUG] Context state:", flush=True)
         print(f"  - has paper_digest: {hasattr(context, 'paper_digest') and context.paper_digest}", flush=True)
         print(f"  - has method_card: {hasattr(context, 'method_card') and context.method_card}", flush=True)
         print(f"  - notes keys: {list(context.notes.keys())}", flush=True)
@@ -46,49 +46,49 @@ class DiagramGeneratorSkill(BaseSkill):
 
             # 单论文分析：生成方法架构图和技术流程图
             if hasattr(context, 'paper_digest') and context.paper_digest:
-                print("✅ Found paper_digest, adding architecture & flowchart", flush=True)
+                print("[OK] Found paper_digest, adding architecture & flowchart", flush=True)
                 diagrams_to_generate.append("paper_architecture")
                 diagrams_to_generate.append("method_flowchart")
 
             if hasattr(context, 'method_card') and context.method_card:
-                print("✅ Found method_card, adding flowchart", flush=True)
+                print("[OK] Found method_card, adding flowchart", flush=True)
                 if "method_flowchart" not in diagrams_to_generate:
                     diagrams_to_generate.append("method_flowchart")
 
             # 多论文分析：生成对比图表和演进时间线
             if context.notes.get("compare_matrix"):
-                print("✅ Found compare_matrix, adding comparison diagrams", flush=True)
+                print("[OK] Found compare_matrix, adding comparison diagrams", flush=True)
                 diagrams_to_generate.append("method_comparison_table")
                 diagrams_to_generate.append("performance_comparison_chart")
                 diagrams_to_generate.append("method_evolution_timeline")
 
             # 综述生成：生成分类树和研究空白图
             if context.notes.get("survey_content"):
-                print("✅ Found survey_content, adding taxonomy & gaps diagrams", flush=True)
+                print("[OK] Found survey_content, adding taxonomy & gaps diagrams", flush=True)
                 diagrams_to_generate.append("taxonomy_tree")
                 diagrams_to_generate.append("research_gaps_diagram")
 
             # 实验相关：生成实验流程和结果对比
             if context.notes.get("innovation_proposals"):
-                print("✅ Found innovation_proposals, adding innovation diagram", flush=True)
+                print("[OK] Found innovation_proposals, adding innovation diagram", flush=True)
                 diagrams_to_generate.append("innovation_architecture")
             if context.notes.get("experiment_design"):
-                print("✅ Found experiment_design, adding workflow diagram", flush=True)
+                print("[OK] Found experiment_design, adding workflow diagram", flush=True)
                 diagrams_to_generate.append("experiment_workflow")
             if context.notes.get("experiment_results"):
-                print("✅ Found experiment_results, adding results diagram", flush=True)
+                print("[OK] Found experiment_results, adding results diagram", flush=True)
                 diagrams_to_generate.append("results_comparison")
             if context.notes.get("ablation_analysis"):
-                print("✅ Found ablation_analysis, adding heatmap", flush=True)
+                print("[OK] Found ablation_analysis, adding heatmap", flush=True)
                 diagrams_to_generate.append("ablation_heatmap")
         else:
             diagrams_to_generate = [diagram_type]
 
-        print(f"\n📋 Total diagrams to generate: {len(diagrams_to_generate)}", flush=True)
-        print(f"📋 Diagram types: {diagrams_to_generate}", flush=True)
+        print(f"\n[LIST] Total diagrams to generate: {len(diagrams_to_generate)}", flush=True)
+        print(f"[LIST] Diagram types: {diagrams_to_generate}", flush=True)
 
         if not diagrams_to_generate:
-            print("⚠️ No diagrams to generate!", flush=True)
+            print("[WARN] No diagrams to generate!", flush=True)
             return SkillResult(
                 name="diagram_generator",
                 message="No diagrams to generate based on context"
@@ -98,34 +98,34 @@ class DiagramGeneratorSkill(BaseSkill):
             generated_diagrams = []
             diagram_dir = context.run_dir / "diagrams"
             diagram_dir.mkdir(exist_ok=True)
-            print(f"\n📁 Diagram directory: {diagram_dir}", flush=True)
+            print(f"\n[DIR] Diagram directory: {diagram_dir}", flush=True)
 
             for dtype in diagrams_to_generate:
-                print(f"\n🎨 Generating {dtype}...", flush=True)
+                print(f"\n[GEN] Generating {dtype}...", flush=True)
                 try:
                     result = self._generate_diagram(dtype, context, diagram_dir)
                     if result:
-                        print(f"✅ Successfully generated {dtype}: {result.get('image_file', 'N/A')}", flush=True)
+                        print(f"[OK] Successfully generated {dtype}: {result.get('image_file', 'N/A')}", flush=True)
                         generated_diagrams.append(result)
                     else:
-                        print(f"⚠️ No result returned for {dtype}", flush=True)
+                        print(f"[WARN] No result returned for {dtype}", flush=True)
                 except Exception as e:
-                    print(f"❌ Error generating {dtype}: {e}", flush=True)
+                    print(f"[ERROR] Error generating {dtype}: {e}", flush=True)
                     import traceback
                     traceback.print_exc()
 
-            print(f"\n📊 Total diagrams generated: {len(generated_diagrams)}", flush=True)
+            print(f"\n[CHART] Total diagrams generated: {len(generated_diagrams)}", flush=True)
 
             # 更新 context
             context.notes.__setitem__("generated_diagrams", generated_diagrams)
 
             # 将图表嵌入到相关文档中
-            print("\n📝 Embedding diagrams into documents...", flush=True)
+            print("\n[INFO] Embedding diagrams into documents...", flush=True)
             self._embed_diagrams_in_documents(context, generated_diagrams)
-            print("✅ Diagrams embedded successfully", flush=True)
+            print("[OK] Diagrams embedded successfully", flush=True)
 
             print("="*80, flush=True)
-            print(f"🎉 DIAGRAM GENERATOR COMPLETED: {len(generated_diagrams, flush=True)} diagrams")
+            print(f"[DONE] DIAGRAM GENERATOR COMPLETED: {len(generated_diagrams)} diagrams", flush=True)
             print("="*80 + "\n", flush=True)
 
             return SkillResult(
@@ -134,7 +134,7 @@ class DiagramGeneratorSkill(BaseSkill):
             )
 
         except Exception as e:
-            print(f"\n❌ DIAGRAM GENERATOR FAILED: {e}", flush=True)
+            print(f"\n[ERROR] DIAGRAM GENERATOR FAILED: {e}", flush=True)
             import traceback
             traceback.print_exc()
             print("="*80 + "\n", flush=True)
@@ -978,7 +978,7 @@ Use Mermaid flowchart syntax. Only output the mermaid code between ```mermaid an
         """将生成的图表嵌入到相关文档中"""
 
         # 构建图表引用部分
-        diagram_section = "\n\n---\n\n## 📊 相关图表\n\n"
+        diagram_section = "\n\n---\n\n## [CHART] 相关图表\n\n"
 
         for diagram in diagrams:
             title = diagram.get('title', 'Untitled')
