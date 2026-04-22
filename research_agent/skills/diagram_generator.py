@@ -84,7 +84,7 @@ class DiagramGeneratorSkill(BaseSkill):
         else:
             diagrams_to_generate = [diagram_type]
 
-        print(f"\n📋 Total diagrams to generate: {len(diagrams_to_generate, flush=True)}")
+        print(f"\n📋 Total diagrams to generate: {len(diagrams_to_generate)}", flush=True)
         print(f"📋 Diagram types: {diagrams_to_generate}", flush=True)
 
         if not diagrams_to_generate:
@@ -105,7 +105,7 @@ class DiagramGeneratorSkill(BaseSkill):
                 try:
                     result = self._generate_diagram(dtype, context, diagram_dir)
                     if result:
-                        print(f"✅ Successfully generated {dtype}: {result.get('image_file', 'N/A', flush=True)}")
+                        print(f"✅ Successfully generated {dtype}: {result.get('image_file', 'N/A')}", flush=True)
                         generated_diagrams.append(result)
                     else:
                         print(f"⚠️ No result returned for {dtype}", flush=True)
@@ -114,7 +114,7 @@ class DiagramGeneratorSkill(BaseSkill):
                     import traceback
                     traceback.print_exc()
 
-            print(f"\n📊 Total diagrams generated: {len(generated_diagrams, flush=True)}")
+            print(f"\n📊 Total diagrams generated: {len(generated_diagrams)}", flush=True)
 
             # 更新 context
             context.notes.__setitem__("generated_diagrams", generated_diagrams)
