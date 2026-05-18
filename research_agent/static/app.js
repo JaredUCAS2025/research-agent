@@ -436,6 +436,10 @@ async function pollTask() {
     if (!response.ok) {
         throw new Error(data.error || '获取任务状态失败');
     }
+    // Update run_id when available
+    if (data.run_id) {
+        state.currentRunId = data.run_id;
+    }
     setTaskState(data);
     if (data.status === 'completed' || data.status === 'failed' || data.status === 'cancelled') {
         stopPollingTask();

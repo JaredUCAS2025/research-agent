@@ -33,6 +33,9 @@ from .skills.ablation_study import AblationStudySkill, SKILL_META as ABLATION_ST
 from .skills.comprehensive_report import ComprehensiveReportSkill, SKILL_META as COMPREHENSIVE_REPORT_META
 from .skills.diagram_generator import DiagramGeneratorSkill, SKILL_META as DIAGRAM_GENERATOR_META
 from .skills.ai_image_generator import AIImageGeneratorSkill, SKILL_META as AI_IMAGE_GENERATOR_META
+# AI research automation skills
+from .skills.fact_validator import FactValidatorSkill
+from .skills.latex_paper_writer import LaTeXPaperWriterSkill
 from .workflows import BUILTIN_GRAPHS
 
 
@@ -85,6 +88,9 @@ class ResearchAgent:
             # Visualization skills
             (DiagramGeneratorSkill(), DIAGRAM_GENERATOR_META),
             (AIImageGeneratorSkill(), AI_IMAGE_GENERATOR_META),
+            # AI research automation skills
+            (FactValidatorSkill(), FactValidatorSkill.meta),
+            (LaTeXPaperWriterSkill(), LaTeXPaperWriterSkill.meta),
         ]
         for skill_inst, meta in _skill_meta_pairs:
             self.registry.register(skill_inst, meta)

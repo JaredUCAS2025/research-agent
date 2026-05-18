@@ -114,19 +114,20 @@ def auto_graph() -> WorkflowGraph:
 
 def research_full_graph() -> WorkflowGraph:
     """
-    Complete research workflow that integrates all capabilities:
-    1. GitHub search and code analysis
-    2. Gap analysis and innovation proposal
+    Complete AI-driven research workflow:
+    1. Literature search and code analysis
+    2. Gap analysis and innovation proposal with fact validation
     3. Experiment design and execution
     4. Ablation study
-    5. Comprehensive report generation
+    5. Diagram generation
+    6. LaTeX paper generation and packaging
     """
     g = WorkflowGraph(name="research_full", entry="start")
 
     # Start
     g.add(StateNode(name="start", node_type="start", transitions={"default": "github_search"}))
 
-    # Phase 1: GitHub Integration
+    # Phase 1: Literature & Code Analysis
     g.add(StateNode(
         name="github_search", node_type="skill", skill_name="github_search",
         transitions={"default": "github_clone"}
@@ -141,22 +142,26 @@ def research_full_graph() -> WorkflowGraph:
     ))
     g.add(StateNode(
         name="confirm_phase1", node_type="confirm",
-        confirm_message="GitHub 集成和代码分析已完成，是否继续进行创新分析？",
+        confirm_message="文献搜索和代码分析已完成，是否继续进行创新分析？",
         transitions={"continue": "gap_analyzer", "cancel": "end"}
     ))
 
-    # Phase 2: Innovation Design
+    # Phase 2: Innovation Design with Validation
     g.add(StateNode(
         name="gap_analyzer", node_type="skill", skill_name="gap_analyzer",
         transitions={"default": "innovation_proposer"}
     ))
     g.add(StateNode(
         name="innovation_proposer", node_type="skill", skill_name="innovation_proposer",
+        transitions={"default": "fact_validator"}
+    ))
+    g.add(StateNode(
+        name="fact_validator", node_type="skill", skill_name="fact_validator",
         transitions={"default": "confirm_phase2"}
     ))
     g.add(StateNode(
         name="confirm_phase2", node_type="confirm",
-        confirm_message="创新点分析已完成，是否继续进行实验设计？",
+        confirm_message="创新点已提出并验证，是否继续进行实验设计？",
         transitions={"continue": "experiment_designer", "cancel": "end"}
     ))
 
@@ -186,18 +191,26 @@ def research_full_graph() -> WorkflowGraph:
     ))
     g.add(StateNode(
         name="confirm_phase4", node_type="confirm",
-        confirm_message="消融实验已完成，是否生成综合报告？",
-        transitions={"continue": "comprehensive_report", "cancel": "end"}
+        confirm_message="消融实验已完成，是否生成图表和论文？",
+        transitions={"continue": "diagram_generator", "cancel": "end"}
     ))
 
-    # Phase 5: Report Generation
+    # Phase 5: Visualization & Paper Generation
+    g.add(StateNode(
+        name="diagram_generator", node_type="skill", skill_name="diagram_generator",
+        transitions={"default": "latex_paper_writer"}
+    ))
+    g.add(StateNode(
+        name="latex_paper_writer", node_type="skill", skill_name="latex_paper_writer",
+        transitions={"default": "comprehensive_report"}
+    ))
     g.add(StateNode(
         name="comprehensive_report", node_type="skill", skill_name="comprehensive_report",
         transitions={"default": "confirm_done"}
     ))
     g.add(StateNode(
         name="confirm_done", node_type="confirm",
-        confirm_message="完整研究流程已完成！",
+        confirm_message="完整研究流程已完成！LaTeX论文已打包，可直接上传到Overleaf。",
         transitions={"continue": "end", "cancel": "end"}
     ))
 

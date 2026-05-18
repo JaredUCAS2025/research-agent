@@ -1,16 +1,16 @@
 :root {
-    --bg: #0b1020;
-    --panel: rgba(15, 23, 42, 0.86);
-    --panel-2: rgba(22, 31, 58, 0.92);
-    --ink: #e8ecff;
-    --muted: #99a3c7;
-    --line: rgba(154, 169, 255, 0.16);
-    --accent: #85f0ff;
-    --accent-2: #8b5cf6;
-    --accent-3: #ffd166;
-    --success: #52d273;
-    --danger: #ff6b81;
-    --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    --bg: #f5f7fa;
+    --panel: rgba(255, 255, 255, 0.95);
+    --panel-2: rgba(248, 250, 252, 0.98);
+    --ink: #1a202c;
+    --muted: #64748b;
+    --line: rgba(59, 130, 246, 0.15);
+    --accent: #3b82f6;
+    --accent-2: #2563eb;
+    --accent-3: #0ea5e9;
+    --success: #10b981;
+    --danger: #ef4444;
+    --shadow: 0 4px 20px rgba(59, 130, 246, 0.08);
 }
 
 * {
@@ -23,9 +23,9 @@ body {
     font-family: "Microsoft YaHei", "Segoe UI", sans-serif;
     color: var(--ink);
     background:
-        radial-gradient(circle at top left, rgba(139, 92, 246, 0.22), transparent 30%),
-        radial-gradient(circle at top right, rgba(133, 240, 255, 0.18), transparent 24%),
-        linear-gradient(135deg, #050816 0%, #0b1020 55%, #121a31 100%);
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.08), transparent 40%),
+        radial-gradient(circle at top right, rgba(14, 165, 233, 0.06), transparent 40%),
+        linear-gradient(135deg, #ffffff 0%, #f5f7fa 50%, #e0e7ff 100%);
 }
 
 button,
@@ -64,7 +64,7 @@ textarea {
     flex-direction: column;
     gap: 20px;
     padding: 26px;
-    background: linear-gradient(180deg, rgba(13, 19, 36, 0.94), rgba(10, 14, 28, 0.92));
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.95));
     border: 1px solid var(--line);
     border-radius: 28px;
     box-shadow: var(--shadow);
@@ -130,8 +130,8 @@ h1 {
     align-items: center;
     padding: 6px 10px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.06);
-    color: var(--muted);
+    background: rgba(59, 130, 246, 0.08);
+    color: var(--accent);
     font-size: 12px;
     border: 1px solid var(--line);
 }
@@ -160,7 +160,7 @@ h1 {
 .ghost-btn {
     border: 1px solid var(--line);
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(59, 130, 246, 0.04);
     color: var(--muted);
     padding: 10px 14px;
     cursor: pointer;
@@ -172,9 +172,9 @@ h1 {
 .tab-btn:hover,
 .artifact-tab:hover,
 .ghost-btn:hover {
-    color: var(--ink);
-    border-color: rgba(133, 240, 255, 0.45);
-    background: rgba(133, 240, 255, 0.1);
+    color: white;
+    border-color: var(--accent);
+    background: var(--accent);
 }
 
 .tab-content {
@@ -200,14 +200,23 @@ label {
 
 input[type="text"],
 input[type="file"],
+input[type="number"],
 textarea {
     width: 100%;
     border: 1px solid var(--line);
     border-radius: 16px;
-    background: rgba(255, 255, 255, 0.04);
+    background: white;
     color: var(--ink);
     padding: 12px 14px;
     outline: none;
+    transition: 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 textarea {
@@ -227,18 +236,24 @@ small,
     border: none;
     border-radius: 16px;
     padding: 12px 18px;
-    color: #04111f;
+    color: white;
     font-weight: 700;
     cursor: pointer;
     background: linear-gradient(135deg, var(--accent) 0%, var(--accent-3) 100%);
-    box-shadow: 0 10px 24px rgba(133, 240, 255, 0.18);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+    transition: 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
 }
 
 .progress-bar {
     width: 100%;
     height: 12px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(59, 130, 246, 0.1);
     overflow: hidden;
     margin-bottom: 14px;
 }
@@ -248,7 +263,7 @@ small,
     height: 100%;
     width: 2%;
     border-radius: inherit;
-    background: linear-gradient(90deg, var(--accent-2), var(--accent));
+    background: linear-gradient(90deg, var(--accent-2), var(--accent-3));
 }
 
 .trace-box,
@@ -265,7 +280,8 @@ small,
     padding: 14px;
     white-space: pre-wrap;
     overflow: auto;
-    color: #d7deff;
+    color: var(--ink);
+    background: rgba(248, 250, 252, 0.5);
 }
 
 .chat-panel,
@@ -303,12 +319,13 @@ small,
     max-width: 90%;
     padding: 14px 16px;
     border-radius: 18px;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(59, 130, 246, 0.06);
     line-height: 1.7;
 }
 
 .chat-message.user .chat-bubble {
-    background: linear-gradient(135deg, rgba(133, 240, 255, 0.2), rgba(255, 209, 102, 0.16));
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(14, 165, 233, 0.12));
+    border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
 .chat-form {
@@ -339,7 +356,8 @@ small,
 .chat-bubble code {
     padding: 2px 6px;
     border-radius: 6px;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--accent-2);
     font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
     font-size: 0.9em;
 }
@@ -348,7 +366,7 @@ small,
 .chat-bubble pre {
     white-space: pre-wrap;
     word-break: break-word;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(248, 250, 252, 0.8);
     border: 1px solid var(--line);
     border-radius: 12px;
     padding: 16px;
@@ -391,10 +409,17 @@ small,
 .history-item {
     padding: 10px 12px;
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(59, 130, 246, 0.04);
     display: flex;
     flex-direction: column;
     gap: 4px;
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    transition: 0.2s ease;
+}
+
+.history-item:hover {
+    background: rgba(59, 130, 246, 0.08);
+    border-color: rgba(59, 130, 246, 0.2);
 }
 
 .history-item span,
@@ -425,14 +450,15 @@ small,
 .eta-stage {
     padding: 4px 10px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(59, 130, 246, 0.06);
     border: 1px solid var(--line);
 }
 
 .eta-stage.current {
-    color: var(--accent);
-    border-color: rgba(133, 240, 255, 0.45);
-    background: rgba(133, 240, 255, 0.1);
+    color: white;
+    border-color: var(--accent);
+    background: var(--accent);
+    font-weight: 600;
 }
 
 .badge[data-status="cancelled"] {
@@ -449,13 +475,14 @@ small,
     margin: 12px 0;
     padding: 14px;
     border-radius: 16px;
-    background: rgba(255, 209, 102, 0.08);
-    border: 1px solid rgba(255, 209, 102, 0.3);
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.3);
 }
 
 .confirm-message {
-    color: var(--accent-3);
+    color: #d97706;
     margin-bottom: 12px;
+    font-weight: 500;
 }
 
 .confirm-actions {
@@ -478,13 +505,13 @@ small,
 }
 
 .artifact-content th {
-    background: rgba(133, 240, 255, 0.08);
-    color: var(--accent);
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--accent-2);
     font-weight: 600;
 }
 
 .artifact-content tr:nth-child(even) {
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(248, 250, 252, 0.5);
 }
 
 .artifact-content ul,
@@ -520,7 +547,7 @@ small,
 }
 
 .chat-bubble th {
-    background: rgba(133, 240, 255, 0.08);
+    background: rgba(59, 130, 246, 0.1);
     color: var(--accent);
 }
 
@@ -531,9 +558,10 @@ small,
     max-width: 360px;
     padding: 14px 16px;
     border-radius: 14px;
-    background: rgba(255, 107, 129, 0.95);
-    color: white;
-    box-shadow: var(--shadow);
+    background: white;
+    color: var(--danger);
+    border: 1px solid var(--danger);
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.2);
 }
 
 .hidden {
@@ -621,7 +649,7 @@ small,
 }
 
 .diagram-gallery h2 {
-    color: #1976d2;
+    color: var(--accent-2);
     font-size: 20px;
     margin-bottom: 16px;
     font-weight: 600;
@@ -630,12 +658,14 @@ small,
 .diagram-item {
     margin-bottom: 32px;
     padding: 16px;
-    background: #f5f5f5;
-    border-radius: 8px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.06);
 }
 
 .diagram-item h3 {
-    color: #424242;
+    color: var(--ink);
     font-size: 16px;
     margin-bottom: 12px;
     font-weight: 500;

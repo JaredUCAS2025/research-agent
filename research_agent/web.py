@@ -379,7 +379,14 @@ def run_harness_task(task_id: str, mode: str, project_name: str, session_id: str
     """Run a workflow via the harness, pausing at confirm nodes."""
     _, session = ensure_session(session_id)
     agent = ResearchAgent()
-    asyncio.run(update_task(task_id, status="running", stage="starting", message=f"开始 harness 模式：{mode}"))
+
+    # Calculate ETA based on mode and paper count
+    paper_count = len(paper_paths) if paper_paths else 1
+    total_eta = _estimate_total_seconds(agent, mode, paper_count)
+    breakdown = _estimate_stage_breakdown(agent, mode, paper_count)
+
+    asyncio.run(update_task(task_id, status="running", stage="starting", message=f"开始 harness 模式：{mode}",
+                           eta_seconds=total_eta, eta_breakdown=breakdown))
 
     # Build context
     if paper_path:
@@ -396,7 +403,9 @@ def run_harness_task(task_id: str, mode: str, project_name: str, session_id: str
     def on_progress(stage: str, message: str, progress: float) -> None:
         if task_id in CANCELLED_TASKS:
             raise InterruptedError("任务已被用户取消")
-        asyncio.run(update_task(task_id, stage=stage, message=message, progress=round(progress, 3), trace=context.trace.copy()))
+        remaining = max(int(total_eta * (1 - progress)), 0)
+        asyncio.run(update_task(task_id, stage=stage, message=message, progress=round(progress, 3),
+                               eta_seconds=remaining, trace=context.trace.copy()))
 
     context.progress_callback = on_progress
 
@@ -526,7 +535,8 @@ async def run_single(
     task_id = create_task("single", project_name, session_id)
     session["messages"].append({"role": "user", "content": f"请快速分析论文：{paper_path.name}"})
     save_session(session)
-    executor.submit(run_single_task, task_id, project_name, paper_path, session_id)
+    # Use harness mode for diagram generation support
+    executor.submit(run_harness_task, task_id, "single", project_name, session_id, paper_paths=[paper_path])
     return {"task_id": task_id, "session_id": session_id}
 
 
@@ -549,7 +559,8 @@ async def run_survey(
     task_id = create_task("survey", project_name, session_id)
     session["messages"].append({"role": "user", "content": f"请对 {len(paper_paths)} 篇论文做综述"})
     save_session(session)
-    executor.submit(run_survey_task, task_id, project_name, paper_paths, session_id)
+    # Use harness mode for diagram generation support
+    executor.submit(run_harness_task, task_id, "survey", project_name, session_id, paper_paths=paper_paths)
     return {"task_id": task_id, "session_id": session_id}
 
 

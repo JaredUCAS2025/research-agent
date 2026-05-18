@@ -62,3 +62,19 @@ class AgentContext:
 
     def add_trace(self, **payload: Any) -> None:
         self.trace.append(payload)
+
+    def get(self, key: str, default: Any = None) -> Any:
+        """Get value from context by key, checking both attributes and notes dict."""
+        if hasattr(self, key):
+            value = getattr(self, key, default)
+            # Return default if attribute exists but is empty/None
+            if value or value == 0 or value is False:
+                return value
+        return self.notes.get(key, default)
+
+    def set(self, key: str, value: Any) -> None:
+        """Set value in context, preferring attributes over notes dict."""
+        if hasattr(self, key):
+            setattr(self, key, value)
+        else:
+            self.notes[key] = value

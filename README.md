@@ -8,16 +8,23 @@
 
 ### Overview
 
-A **Skill-based LLM Agent System** designed for academic research workflows, including paper reading, multi-paper comparison, conversational follow-ups, and lightweight code repository analysis.
+A **Complete AI-Driven Research Automation System** that transforms research ideas into publication-ready papers. From literature search to LaTeX paper generation, this system automates the entire research workflow.
 
-This is not just a “paper summarization script” — it's an intelligent workbench built around real research workflows:
+**🎯 Core Capabilities:**
 
-- Fast structured reading of single papers
-- Multi-paper comparison, conflict detection, and survey generation
-- Artifact persistence with scoped chat support
-- Local code repository profiling, AST analysis, and environment recommendations
-- Dual entry points (CLI & Web) for experimentation and demonstration
-- LLM-driven state graph orchestration (Harness mode) with user confirmation at key checkpoints
+- **End-to-End Research Automation**: From research direction → literature review → innovation proposal → experiment execution → paper writing
+- **AI Hallucination Prevention**: Multi-layer validation with confidence scoring
+- **LaTeX Paper Generation**: Automatic IEEE-format paper generation with all figures packaged for Overleaf
+- **Intelligent Workflow**: 5-phase workflow with user confirmation at key checkpoints
+- **28 Specialized Skills**: Covering paper analysis, code analysis, experiment design, visualization, and more
+
+### 🆕 What's New (v2.0)
+
+- ✨ **Complete Research Workflow**: Automated end-to-end research pipeline
+- 🛡️ **Fact Validation**: Prevents AI hallucinations with confidence scoring
+- 📝 **LaTeX Paper Writer**: Generates publication-ready papers with automatic packaging
+- 🎨 **Modern UI**: Clean tech-blue and white theme
+- 🔧 **Bug Fixes**: Fixed ETA display, image rendering, and context management
 
 ### Why This Project Matters
 
@@ -28,10 +35,11 @@ Most LLM applications in research stop at “copy paper content to model, get a 
 - Multi-paper systematic comparison is difficult
 - Same paper gets processed repeatedly (slow & expensive)
 - Disconnected from real research workflows (code repos, reproduction environments)
+- **No quality control for AI-generated content**
 
-**Research Agent** solves a more realistic problem:
+**Research Agent v2.0** solves a more ambitious problem:
 
-> How to organize paper reading, structured understanding, comparative analysis, artifact persistence, and follow-up interactions into a scalable agent workflow.
+> How to automate the entire research workflow from idea to publication, while ensuring quality through validation and human oversight.
 
 ### Quick Start
 
@@ -103,7 +111,19 @@ print(result.run_id)
 
 ### Core Features
 
-#### Basic Research Workflow
+#### 🚀 Complete Research Automation (New!)
+- **GitHub Integration**: Automatically search and clone relevant code repositories
+- **Gap Analysis**: Identify research gaps and limitations in existing methods
+- **Innovation Proposal**: AI-driven generation of novel research ideas with feasibility assessment
+- **Fact Validation**: Multi-layer verification to prevent AI hallucinations (confidence scoring)
+- **Experiment Design**: Automated experimental setup with baseline comparisons and metrics
+- **Environment Setup**: Automatic dependency detection and virtual environment configuration
+- **Experiment Execution**: Run experiments with real-time monitoring and result collection
+- **Ablation Study**: Systematic component analysis with contribution ranking
+- **LaTeX Paper Generation**: Generate complete IEEE-format papers with all figures packaged for Overleaf
+- **Comprehensive Reporting**: Generate complete research reports with visualizations
+
+#### 📚 Basic Research Workflow
 - **Single Paper Reading**: Fast structured extraction (metadata, claims, methods)
 - **Multi-Paper Survey**: Comparison matrix, conflict detection, survey generation
 - **Scoped Chat**: Conversational follow-ups based on generated artifacts
@@ -111,18 +131,7 @@ print(result.run_id)
 - **Harness Orchestration**: LLM-driven workflow with dynamic routing
 - **Dual Interface**: CLI and Web UI
 
-#### 🆕 Advanced Research Automation (New!)
-- **GitHub Integration**: Automatically search and clone relevant code repositories
-- **Deep Code Analysis**: AST-based analysis with dependency mapping and design pattern recognition
-- **Gap Analysis**: Identify research gaps and limitations in existing methods
-- **Innovation Proposal**: AI-driven generation of novel research ideas with feasibility assessment
-- **Experiment Design**: Automated experimental setup with baseline comparisons and metrics
-- **Environment Setup**: Automatic dependency detection and virtual environment configuration
-- **Experiment Execution**: Run experiments with real-time monitoring and result collection
-- **Ablation Study**: Systematic component analysis with contribution ranking
-- **Comprehensive Reporting**: Generate complete research reports with visualizations
-
-#### 🎨 Automatic Diagram Generation (New!)
+#### 🎨 Automatic Diagram Generation
 - **Integrated Workflow**: Diagrams are automatically generated during paper analysis and survey workflows
 - **Single Paper**: Architecture diagrams and method flowcharts
 - **Multi-Paper Survey**: Comparison tables, performance charts, evolution timelines, taxonomy trees, research gap diagrams
@@ -130,9 +139,7 @@ print(result.run_id)
 - **AI Image Generation**: Create concept illustrations using DALL-E 3, Tongyi Wanxiang, or Stable Diffusion
 - **Export Formats**: SVG, PNG, PDF for direct use in LaTeX/Word documents
 
-All diagrams are saved in the `diagrams/` folder within each run directory. See [IMAGE_GENERATION_GUIDE.md](IMAGE_GENERATION_GUIDE.md) for advanced usage.
-
-See [ENHANCEMENT_DESIGN.md](ENHANCEMENT_DESIGN.md) and [USAGE_EXAMPLES.md](USAGE_EXAMPLES.md) for details.
+All diagrams are saved in the `diagrams/` folder within each run directory.
 
 ### Architecture
 
