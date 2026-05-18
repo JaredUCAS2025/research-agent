@@ -79,20 +79,21 @@ class FactValidatorSkill(BaseSkill):
         context.report_progress("fact_validator", "事实验证完成", 1.0)
 
         # 根据置信度决定是否警告
+        from ..base import SkillResult
         if overall_confidence < 0.6:
-            return self.success(
-                message=f"⚠️ 验证完成，但置信度较低 ({overall_confidence:.1%})，请仔细检查标记的问题",
-                data=validation_report
+            return SkillResult(
+                name=self.meta.name,
+                message=f"⚠️ 验证完成，但置信度较低 ({overall_confidence:.1%})，请仔细检查标记的问题"
             )
         elif overall_confidence < 0.8:
-            return self.success(
-                message=f"✓ 验证完成，置信度中等 ({overall_confidence:.1%})，建议审查部分内容",
-                data=validation_report
+            return SkillResult(
+                name=self.meta.name,
+                message=f"✓ 验证完成，置信度中等 ({overall_confidence:.1%})，建议审查部分内容"
             )
         else:
-            return self.success(
-                message=f"✓ 验证完成，置信度高 ({overall_confidence:.1%})",
-                data=validation_report
+            return SkillResult(
+                name=self.meta.name,
+                message=f"✓ 验证完成，置信度高 ({overall_confidence:.1%})"
             )
 
     def _validate_innovation(self, llm: LLMClient, innovation: dict,

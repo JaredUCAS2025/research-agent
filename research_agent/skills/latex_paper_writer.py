@@ -74,9 +74,10 @@ class LaTeXPaperWriterSkill(BaseSkill):
 
         context.report_progress("latex_paper_writer", "LaTeX论文生成完成", 1.0)
 
-        return self.success(
-            message=f"已生成LaTeX论文并打包到 {zip_path.name}",
-            data={"latex_path": str(latex_path), "package_path": str(zip_path)}
+        from ..base import SkillResult
+        return SkillResult(
+            name=self.meta.name,
+            message=f"已生成LaTeX论文并打包到 {zip_path.name}"
         )
 
     def _build_paper_prompt(self, innovation, experiments, ablation, gap_analysis) -> str:
