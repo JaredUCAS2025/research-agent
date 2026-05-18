@@ -35,9 +35,8 @@ class GitHubSearchSkill(BaseSkill):
         query = context.get("github_query")
         if not query:
             return SkillResult(
-                success=False,
-                message="Missing github_query in context",
-                artifacts={}
+                name="github_search",
+                message="Missing github_query in context"
             )
 
         language = context.get("github_language", "")
@@ -57,9 +56,8 @@ class GitHubSearchSkill(BaseSkill):
 
             if not repos:
                 return SkillResult(
-                    success=True,
-                    message=f"No repositories found for query: {query}",
-                    artifacts={"repositories": []}
+                    name="github_search",
+                    message=f"No repositories found for query: {query}"
                 )
 
             # 保存结果
@@ -77,20 +75,14 @@ class GitHubSearchSkill(BaseSkill):
             context.set("github_repositories", repos)
 
             return SkillResult(
-                success=True,
-                message=f"Found {len(repos)} repositories for query: {query}",
-                artifacts={
-                    "repositories": repos,
-                    "search_results_json": str(output_path),
-                    "search_report_md": str(report_path)
-                }
+                name="github_search",
+                message=f"Found {len(repos)} repositories for query: {query}"
             )
 
         except Exception as e:
             return SkillResult(
-                success=False,
-                message=f"GitHub search failed: {str(e)}",
-                artifacts={}
+                name="github_search",
+                message=f"GitHub search failed: {str(e)}"
             )
 
     def _search_repositories(self, query: str, max_results: int) -> List[Dict[str, Any]]:

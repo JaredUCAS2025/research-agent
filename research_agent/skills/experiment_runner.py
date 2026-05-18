@@ -28,9 +28,8 @@ class ExperimentRunnerSkill(BaseSkill):
 
         if not experiment_design:
             return SkillResult(
-                success=False,
-                message="Missing experiment_design in context",
-                artifacts={}
+                name="experiment_runner",
+                message="Missing experiment_design in context"
             )
 
         try:
@@ -113,21 +112,14 @@ class ExperimentRunnerSkill(BaseSkill):
             context.set("experiment_results", results_summary)
 
             return SkillResult(
-                success=True,
-                message=f"Completed {len(results)} experiments ({results_summary['successful']} successful)",
-                artifacts={
-                    "experiment_results": results_summary,
-                    "results_json": str(results_path),
-                    "run_log": str(log_path),
-                    "output_dir": str(exp_output_dir)
-                }
+                name="experiment_runner",
+                message=f"Completed {len(results)} experiments ({results_summary['successful']} successful)"
             )
 
         except Exception as e:
             return SkillResult(
-                success=False,
-                message=f"Experiment execution failed: {str(e)}",
-                artifacts={}
+                name="experiment_runner",
+                message=f"Experiment execution failed: {str(e)}"
             )
 
     def _run_single_experiment(

@@ -26,9 +26,8 @@ class EnvironmentSetupSkill(BaseSkill):
 
         if not repo_path and not requirements_file:
             return SkillResult(
-                success=False,
-                message="Missing cloned_repo_path or requirements_file in context",
-                artifacts={}
+                name="environment_setup",
+                message="Missing cloned_repo_path or requirements_file in context"
             )
 
         # 确定工作目录
@@ -39,9 +38,8 @@ class EnvironmentSetupSkill(BaseSkill):
 
         if not work_dir.exists():
             return SkillResult(
-                success=False,
-                message=f"Work directory does not exist: {work_dir}",
-                artifacts={}
+                name="environment_setup",
+                message=f"Work directory does not exist: {work_dir}"
             )
 
         try:
@@ -55,9 +53,8 @@ class EnvironmentSetupSkill(BaseSkill):
             venv_result = self._create_virtualenv(venv_dir, setup_log)
             if not venv_result:
                 return SkillResult(
-                    success=False,
-                    message="Failed to create virtual environment",
-                    artifacts={"setup_log": setup_log}
+                    name="environment_setup",
+                    message="Failed to create virtual environment"
                 )
 
             # 2. 查找依赖文件
@@ -110,21 +107,14 @@ class EnvironmentSetupSkill(BaseSkill):
                 message += " with some warnings"
 
             return SkillResult(
-                success=True,
-                message=message,
-                artifacts={
-                    "venv_path": str(venv_dir),
-                    "environment_info": env_info,
-                    "setup_log": str(log_path),
-                    "env_info_json": str(env_info_path)
-                }
+                name="environment_setup",
+                message=message
             )
 
         except Exception as e:
             return SkillResult(
-                success=False,
-                message=f"Environment setup failed: {str(e)}",
-                artifacts={}
+                name="environment_setup",
+                message=f"Environment setup failed: {str(e)}"
             )
 
     def _create_virtualenv(self, venv_dir: Path, log: List[str]) -> bool:

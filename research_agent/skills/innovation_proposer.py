@@ -27,9 +27,8 @@ class InnovationProposerSkill(BaseSkill):
         gap_analysis = context.get("gap_analysis")
         if not gap_analysis:
             return SkillResult(
-                success=False,
-                message="Missing gap_analysis in context",
-                artifacts={}
+                name="innovation_proposer",
+                message="Missing gap_analysis in context"
             )
 
         # 获取其他上下文信息
@@ -59,20 +58,14 @@ class InnovationProposerSkill(BaseSkill):
             context.set("innovation_proposals", innovations)
 
             return SkillResult(
-                success=True,
-                message=f"Successfully proposed {len(innovations.get('proposals', []))} innovations",
-                artifacts={
-                    "innovations": innovations,
-                    "innovations_json": str(output_path),
-                    "innovations_report": str(report_path)
-                }
+                name="innovation_proposer",
+                message=f"Successfully proposed {len(innovations.get('proposals', []))} innovations"
             )
 
         except Exception as e:
             return SkillResult(
-                success=False,
-                message=f"Innovation proposal failed: {str(e)}",
-                artifacts={}
+                name="innovation_proposer",
+                message=f"Innovation proposal failed: {str(e)}"
             )
 
     def _propose_innovations(

@@ -29,9 +29,8 @@ class ExperimentDesignerSkill(BaseSkill):
 
         if not innovation_proposals and not selected_innovation:
             return SkillResult(
-                success=False,
-                message="Missing innovation_proposals or selected_innovation in context",
-                artifacts={}
+                name="experiment_designer",
+                message="Missing innovation_proposals or selected_innovation in context"
             )
 
         # 如果没有选定的创新点，使用第一个高优先级的
@@ -45,9 +44,8 @@ class ExperimentDesignerSkill(BaseSkill):
 
         if not selected_innovation:
             return SkillResult(
-                success=False,
-                message="No innovation to design experiments for",
-                artifacts={}
+                name="experiment_designer",
+                message="No innovation to design experiments for"
             )
 
         try:
@@ -72,20 +70,14 @@ class ExperimentDesignerSkill(BaseSkill):
             context.set("experiment_design", experiment_design)
 
             return SkillResult(
-                success=True,
-                message="Successfully designed experiment plan",
-                artifacts={
-                    "experiment_design": experiment_design,
-                    "design_json": str(output_path),
-                    "design_report": str(report_path)
-                }
+                name="experiment_designer",
+                message="Successfully designed experiment plan"
             )
 
         except Exception as e:
             return SkillResult(
-                success=False,
-                message=f"Experiment design failed: {str(e)}",
-                artifacts={}
+                name="experiment_designer",
+                message=f"Experiment design failed: {str(e)}"
             )
 
     def _design_experiments(

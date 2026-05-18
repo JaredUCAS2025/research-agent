@@ -25,9 +25,8 @@ class GitHubCloneSkill(BaseSkill):
 
         if not clone_url and not repo_name:
             return SkillResult(
-                success=False,
-                message="Missing github_clone_url or github_repo_name in context",
-                artifacts={}
+                name="github_clone",
+                message="Missing github_clone_url or github_repo_name in context"
             )
 
         # 如果只有 repo_name，从 github_repositories 中查找
@@ -40,9 +39,8 @@ class GitHubCloneSkill(BaseSkill):
 
             if not clone_url:
                 return SkillResult(
-                    success=False,
-                    message=f"Repository {repo_name} not found in search results",
-                    artifacts={}
+                    name="github_clone",
+                    message=f"Repository {repo_name} not found in search results"
                 )
 
         # 确定克隆目标目录
@@ -69,9 +67,8 @@ class GitHubCloneSkill(BaseSkill):
 
             if result.returncode != 0:
                 return SkillResult(
-                    success=False,
-                    message=f"Git clone failed: {result.stderr}",
-                    artifacts={}
+                    name="github_clone",
+                    message=f"Git clone failed: {result.stderr}"
                 )
 
             # 分析仓库基本信息
@@ -87,26 +84,19 @@ class GitHubCloneSkill(BaseSkill):
             context.set("cloned_repo_info", repo_info)
 
             return SkillResult(
-                success=True,
-                message=f"Successfully cloned repository to {clone_path}",
-                artifacts={
-                    "clone_path": str(clone_path),
-                    "repo_info": repo_info,
-                    "repo_info_json": str(info_path)
-                }
+                name="github_clone",
+                message=f"Successfully cloned repository to {clone_path}"
             )
 
         except subprocess.TimeoutExpired:
             return SkillResult(
-                success=False,
-                message="Git clone timeout (exceeded 5 minutes)",
-                artifacts={}
+                name="github_clone",
+                message="Git clone timeout (exceeded 5 minutes)"
             )
         except Exception as e:
             return SkillResult(
-                success=False,
-                message=f"Clone failed: {str(e)}",
-                artifacts={}
+                name="github_clone",
+                message=f"Clone failed: {str(e)}"
             )
 
     def _analyze_repo_structure(self, repo_path: Path) -> Dict[str, Any]:

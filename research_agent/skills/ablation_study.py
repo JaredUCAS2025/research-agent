@@ -29,9 +29,8 @@ class AblationStudySkill(BaseSkill):
 
         if not experiment_results:
             return SkillResult(
-                success=False,
-                message="Missing experiment_results in context",
-                artifacts={}
+                name="ablation_study",
+                message="Missing experiment_results in context"
             )
 
         try:
@@ -40,9 +39,8 @@ class AblationStudySkill(BaseSkill):
 
             if not ablation_results:
                 return SkillResult(
-                    success=False,
-                    message="No ablation experiments found in results",
-                    artifacts={}
+                    name="ablation_study",
+                    message="No ablation experiments found in results"
                 )
 
             # 分析消融实验
@@ -74,21 +72,14 @@ class AblationStudySkill(BaseSkill):
             context.set("ablation_analysis", analysis)
 
             return SkillResult(
-                success=True,
-                message=f"Analyzed {len(ablation_results)} ablation experiments",
-                artifacts={
-                    "ablation_analysis": analysis,
-                    "analysis_json": str(analysis_path),
-                    "report": str(report_path),
-                    "visualizations": visualizations
-                }
+                name="ablation_study",
+                message=f"Analyzed {len(ablation_results)} ablation experiments"
             )
 
         except Exception as e:
             return SkillResult(
-                success=False,
-                message=f"Ablation study failed: {str(e)}",
-                artifacts={}
+                name="ablation_study",
+                message=f"Ablation study failed: {str(e)}"
             )
 
     def _extract_ablation_results(

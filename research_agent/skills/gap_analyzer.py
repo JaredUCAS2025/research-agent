@@ -31,9 +31,8 @@ class GapAnalyzerSkill(BaseSkill):
 
         if not paper_digests and not code_analysis:
             return SkillResult(
-                success=False,
-                message="No paper digests or code analysis found in context",
-                artifacts={}
+                name="gap_analyzer",
+                message="No paper digests or code analysis found in context"
             )
 
         try:
@@ -59,20 +58,14 @@ class GapAnalyzerSkill(BaseSkill):
             context.set("gap_analysis", gap_analysis)
 
             return SkillResult(
-                success=True,
-                message="Successfully analyzed research gaps",
-                artifacts={
-                    "gap_analysis": gap_analysis,
-                    "gap_analysis_json": str(output_path),
-                    "gap_analysis_report": str(report_path)
-                }
+                name="gap_analyzer",
+                message="Successfully analyzed research gaps"
             )
 
         except Exception as e:
             return SkillResult(
-                success=False,
-                message=f"Gap analysis failed: {str(e)}",
-                artifacts={}
+                name="gap_analyzer",
+                message=f"Gap analysis failed: {str(e)}"
             )
 
     def _analyze_gaps(

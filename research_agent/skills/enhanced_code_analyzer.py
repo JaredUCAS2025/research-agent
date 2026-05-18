@@ -28,17 +28,15 @@ class EnhancedCodeAnalyzerSkill(BaseSkill):
         repo_path = context.get("cloned_repo_path")
         if not repo_path:
             return SkillResult(
-                success=False,
-                message="Missing cloned_repo_path in context",
-                artifacts={}
+                name="enhanced_code_analyzer",
+                message="Missing cloned_repo_path in context"
             )
 
         repo_path = Path(repo_path)
         if not repo_path.exists():
             return SkillResult(
-                success=False,
-                message=f"Repository path does not exist: {repo_path}",
-                artifacts={}
+                name="enhanced_code_analyzer",
+                message=f"Repository path does not exist: {repo_path}"
             )
 
         try:
@@ -83,20 +81,14 @@ class EnhancedCodeAnalyzerSkill(BaseSkill):
             context.set("code_analysis", output)
 
             return SkillResult(
-                success=True,
-                message=f"Successfully analyzed repository: {repo_path.name}",
-                artifacts={
-                    "analysis": output,
-                    "analysis_json": str(output_path),
-                    "analysis_report": str(report_path)
-                }
+                name="enhanced_code_analyzer",
+                message=f"Successfully analyzed repository: {repo_path.name}"
             )
 
         except Exception as e:
             return SkillResult(
-                success=False,
-                message=f"Code analysis failed: {str(e)}",
-                artifacts={}
+                name="enhanced_code_analyzer",
+                message=f"Code analysis failed: {str(e)}"
             )
 
     def _read_readme(self, repo_path: Path) -> str:

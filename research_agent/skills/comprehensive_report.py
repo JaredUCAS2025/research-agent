@@ -72,21 +72,14 @@ class ComprehensiveReportSkill(BaseSkill):
             context.set("comprehensive_report", report_sections)
 
             return SkillResult(
-                success=True,
-                message="Successfully generated comprehensive research report",
-                artifacts={
-                    "report_markdown": str(report_path),
-                    "report_latex": str(latex_path),
-                    "presentation": str(pres_path),
-                    "report_sections": report_sections
-                }
+                name="comprehensive_report",
+                message="Successfully generated comprehensive research report"
             )
 
         except Exception as e:
             return SkillResult(
-                success=False,
-                message=f"Report generation failed: {str(e)}",
-                artifacts={}
+                name="comprehensive_report",
+                message=f"Report generation failed: {str(e)}"
             )
 
     def _generate_abstract(self, components: Dict[str, Any]) -> str:
